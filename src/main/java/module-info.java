@@ -1,6 +1,7 @@
 module com.example.its1155ormfinal_project {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
 
     opens com.example.its1155ormfinal_project to javafx.fxml;
