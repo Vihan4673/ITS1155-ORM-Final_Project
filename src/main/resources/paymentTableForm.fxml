@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="678.0" prefWidth="820.0" style="-fx-background-color: linear-gradient(to bottom, #BBDCE5, #FFFFFF);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.PaymentTableFormController">
+
+    <!-- Header -->
+    <HBox layoutX="50.0" layoutY="20.0" spacing="10.0">
+        <children>
+            <!-- Icon -->
+            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@asset/icon/payment-method.png" />
+                </image>
+            </ImageView>
+
+            <!-- Label -->
+            <Label text="All Payment">
+                <font>
+                    <Font name="DejaVu Serif Condensed Bold" size="24.0" />
+                </font>
+            </Label>
+        </children>
+    </HBox>
+
+    <!-- Input Fields -->
+    <TextField fx:id="txCouID" layoutX="88.0" layoutY="70.0" prefHeight="31.0" prefWidth="210.0" promptText="Course ID" />
+
+    <TextField fx:id="txtStuID" layoutX="320.0" layoutY="70.0" prefHeight="31.0" prefWidth="210.0" promptText="Student ID" />
+
+    <!-- TableView -->
+    <TableView fx:id="tblPayments" editable="true" layoutX="88.0" layoutY="120.0" prefHeight="450.0" prefWidth="650.0">
+        <columns>
+            <TableColumn fx:id="colPaymentId" prefWidth="100" text="Payment ID" />
+            <TableColumn fx:id="colStudent" prefWidth="120" text="Student" />
+            <TableColumn fx:id="colProgram" prefWidth="120" text="Program" />
+            <TableColumn fx:id="colAmount" prefWidth="100" text="Amount" />
+            <TableColumn fx:id="colDate" prefWidth="100" text="Date" />
+            <TableColumn fx:id="colStatus" prefWidth="100" text="Status" />
+        </columns>
+    </TableView>
+
+</AnchorPane>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="458.0" prefWidth="600" style="-fx-background-color: linear-gradient(to bottom, #94ddf3, #FFFFFF);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.PaymentFormController">
+
+    <children>
+
+        <!-- Title -->
+        <Label layoutX="200.0" layoutY="30.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Payment Management" />
+
+        <!-- Payment ID -->
+        <Label layoutX="80" layoutY="100" style="-fx-font-weight: bold;" text="Payment ID:" />
+        <TextField fx:id="txtPaymentId" layoutX="200" layoutY="95" prefWidth="250" />
+
+        <!-- Student -->
+        <Label layoutX="80" layoutY="150" style="-fx-font-weight: bold;" text="Student:" />
+        <ComboBox fx:id="cmbStudent" layoutX="200" layoutY="145" prefWidth="250" />
+
+        <!-- Program -->
+        <Label layoutX="80" layoutY="200" style="-fx-font-weight: bold;" text="Program:" />
+        <ComboBox fx:id="cmbProgram" layoutX="200" layoutY="195" prefWidth="250" />
+
+        <!-- Amount -->
+        <Label layoutX="80" layoutY="250" style="-fx-font-weight: bold;" text="Amount:" />
+        <TextField fx:id="txtAmount" layoutX="200" layoutY="245" prefWidth="250" />
+
+        <!-- Payment Date -->
+        <Label layoutX="80" layoutY="300" style="-fx-font-weight: bold;" text="Payment Date:" />
+        <DatePicker fx:id="dpPaymentDate" layoutX="200" layoutY="295" prefWidth="250" />
+
+        <!-- Status -->
+        <Label layoutX="80" layoutY="350" style="-fx-font-weight: bold;" text="Status:" />
+        <ComboBox fx:id="cmbStatus" layoutX="200" layoutY="345" prefWidth="250" />
+
+        <!-- Buttons -->
+        <Button fx:id="btnMakePayment" layoutX="287.0" layoutY="400.0" onAction="#btnMakePaymentOnAction" prefHeight="31.0" prefWidth="149.0" style="-fx-font-weight: bold; -fx-background-color: #0f933d;" text="💳 Make Payment" textFill="WHITE" />
+
+        <Button fx:id="btnCancel" layoutX="460.0" layoutY="400.0" onAction="#btnCancelOnAction" prefWidth="100" style="-fx-font-weight: bold; -fx-background-color: red;" text="❌ Cancel" textFill="WHITE" />
+
+        <!-- Icon -->
+        <ImageView fitHeight="46.0" fitWidth="48.0" layoutX="101.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@asset/icon/credit-card.png" />
+            </image>
+        </ImageView>
+
+    </children>
+</AnchorPane>
