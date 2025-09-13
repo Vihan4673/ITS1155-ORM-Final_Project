@@ -3,11 +3,9 @@ package lk.ijse.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
@@ -62,15 +60,15 @@ public class LoginFormController {
             String fxmlFile;
 
             if ("Admin".equalsIgnoreCase(role)) {
-                fxmlFile = "/mainForm.fxml";  // Admin → mainForm
+                fxmlFile = "/mainForm.fxml";
             } else if ("Admissions Coordinator".equalsIgnoreCase(role)) {
-                fxmlFile = "/mainForm2.fxml"; // Coordinator → mainForm2
+                fxmlFile = "/Dashboardpage.fxml";
             } else {
                 new Alert(Alert.AlertType.ERROR, "Unknown role: " + role).show();
                 return;
             }
 
-            Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource(fxmlFile)));
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource(fxmlFile)));
             Stage stage = (Stage) fullLoginForm.getScene().getWindow();
             stage.setScene(scene);
             stage.centerOnScreen();
@@ -83,11 +81,13 @@ public class LoginFormController {
     }
 
     @FXML
-    void goToSignUpOnAction(MouseEvent event) {
+    void goToSignUpOnAction(ActionEvent event) {
         try {
-            loginForm.getChildren().setAll((Node) FXMLLoader.load(this.getClass().getResource("/signUpForm.fxml")));
+            // Make sure the FXML file exists under src/main/resources
+            AnchorPane signUpPane = FXMLLoader.load(getClass().getResource("/signUpForm.fxml"));
+            loginForm.getChildren().setAll(signUpPane);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            new Alert(Alert.AlertType.ERROR, "Cannot load Sign Up form!").show();
         }
     }
 
@@ -101,7 +101,6 @@ public class LoginFormController {
         inputPassword.requestFocus();
     }
 
-    // FIX: Add missing btnViewOnAction to prevent FXML error
     @FXML
     void btnViewOnAction(ActionEvent event) {
         System.out.println("View button clicked!");

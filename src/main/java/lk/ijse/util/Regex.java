@@ -1,7 +1,6 @@
 package lk.ijse.util;
 
 import javafx.scene.control.TextField;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

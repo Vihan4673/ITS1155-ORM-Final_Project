@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="dashboardFrom" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.MainForm2Controller">
+<AnchorPane fx:id="dashboardFrom" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.DashboardController">
     <children>
         <AnchorPane fx:id="changeForm" layoutX="219.0" layoutY="10.0" prefHeight="630.0" prefWidth="770.0" style="-fx-background-color: #468A9A;" />
         <ImageView fitHeight="254.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true">
@@ -17,52 +17,92 @@
             </image>
         </ImageView>
 
-        <!-- Buttons moved further upwards -->
         <VBox layoutX="12.0" layoutY="170.0" prefHeight="400.0" prefWidth="195.0">
             <children>
                 <JFXButton fx:id="btnDashboard" onAction="#btnDashboardOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-border-radius: 5; -fx-background-radius: 10;" text="Dashboard" textFill="WHITE">
+                       -fx-border-radius: 5; -fx-background-radius: 10;" text="Dashboard" textFill="WHITE" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-dashboard-48.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
                 <JFXButton fx:id="btnStudent" onAction="#btnStudentOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Student">
+                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Student" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-student-48.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
                 <JFXButton fx:id="btnProgram" onAction="#btnProgramOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Course">
+                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Course" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-course-50.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
                 <JFXButton fx:id="btnInstructor" onAction="#btnInstructorOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Instructor">
+                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Instructor" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-instructor-64.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
                 <JFXButton fx:id="btnPayment" onAction="#btnPaymentOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Payment">
+                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Payment" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-payment-64.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
                 <JFXButton fx:id="btnLessons" onAction="#btnLessonsOnAction" prefHeight="50.0" prefWidth="199.0"
                            style="-fx-border-color: white; -fx-background-color: #468A9A; -fx-border-width: 3;
-                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Lessons">
+                       -fx-background-radius: 10; -fx-border-radius: 5;" text="Manage Lessons" contentDisplay="LEFT">
                     <font>
                         <Font name="DejaVu Sans Condensed Bold" size="17.0" />
                     </font>
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@asset/icon/icons8-lesson-50.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </JFXButton>
-
             </children>
             <opaqueInsets>
                 <Insets />

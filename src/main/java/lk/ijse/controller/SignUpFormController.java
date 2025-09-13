@@ -6,8 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
@@ -22,21 +22,46 @@ import java.io.IOException;
 public class SignUpFormController {
 
     @FXML
-    private CheckBox adminCheckBox;
-
-    @FXML
-    private CheckBox admissionCheckBox;
-
-    @FXML
-    private TextField inputPassword;
+    private AnchorPane signUpForm;
 
     @FXML
     private TextField inputUserName;
 
     @FXML
-    private AnchorPane signUpForm;
+    private PasswordField inputPassword;
 
-    SignUpBO signUpBO = (SignUpBO) BOFactory.getBO(BOFactory.BOType.SIGNUP);
+    @FXML
+    private CheckBox adminCheckBox;
+
+    @FXML
+    private CheckBox admissionCheckBox;
+
+    private final SignUpBO signUpBO = (SignUpBO) BOFactory.getBO(BOFactory.BOType.SIGNUP);
+
+    @FXML
+    void signUpBtnOnAction(ActionEvent event) {
+        if (isValid()){
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserName(inputUserName.getText().trim());
+            userDTO.setPassword(PasswordStorage.hashPassword(inputPassword.getText().trim()));
+
+            if (adminCheckBox.isSelected()) {
+                userDTO.setRole("Admin");
+            } else {
+                userDTO.setRole("Admissions Coordinator");
+            }
+
+            try {
+                signUpBO.signUp(userDTO);
+                new Alert(Alert.AlertType.INFORMATION,"SignUp Successful!").show();
+                clearFields();
+            } catch (UserAlreadyExistsException e) {
+                ExceptionHandler.handleException(e);
+            }
+        } else {
+            new Alert(Alert.AlertType.WARNING,"Please Enter All Fields !!").show();
+        }
+    }
 
     @FXML
     void adminCheckBoxOnAction(ActionEvent event) {
@@ -51,14 +76,16 @@ public class SignUpFormController {
     }
 
     @FXML
-    void backToLoginOnAction(MouseEvent event) {
+    void backToLoginOnAction(javafx.scene.input.MouseEvent event) {
         try {
-            Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource("/loginForm.fxml")));
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/loginForm.fxml")));
             Stage stage = (Stage) signUpForm.getScene().getWindow();
             stage.setScene(scene);
+            stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load login form!").show();
         }
     }
 
@@ -67,36 +94,16 @@ public class SignUpFormController {
         inputPassword.requestFocus();
     }
 
-    @FXML
-    void signUpBtnOnAction(ActionEvent event) {
-        if (isValied()){
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserName(inputUserName.getText().trim());
-            userDTO.setPassword(PasswordStorage.hashPassword(inputPassword.getText().trim()));
-
-            if (adminCheckBox.isSelected()) {
-                userDTO.setRole("Admin");
-            } else {
-                userDTO.setRole("Admissions Coordinator");
-            }
-
-            try {
-                signUpBO.signUp(userDTO);
-            } catch (UserAlreadyExistsException e) {
-                ExceptionHandler.handleException(e);
-            }
-
-            inputUserName.clear();
-            inputPassword.clear();
-            adminCheckBox.setSelected(false);
-            admissionCheckBox.setSelected(false);
-        } else {
-            new Alert(Alert.AlertType.WARNING,"Please Enter All Fields !!").show();
-        }
+    private boolean isValid() {
+        return !inputUserName.getText().isEmpty()
+                && !inputPassword.getText().isEmpty()
+                && (adminCheckBox.isSelected() || admissionCheckBox.isSelected());
     }
 
-    public boolean isValied() {
-        return !inputUserName.getText().isEmpty() && !inputPassword.getText().isEmpty() && (adminCheckBox.isSelected() || admissionCheckBox.isSelected());
+    private void clearFields() {
+        inputUserName.clear();
+        inputPassword.clear();
+        adminCheckBox.setSelected(false);
+        admissionCheckBox.setSelected(false);
     }
-
 }

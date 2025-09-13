@@ -1,169 +1,137 @@
 package lk.ijse.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.jfoenix.controls.JFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
-import lk.ijse.bo.BOFactory;
-import lk.ijse.bo.custom.DashboardBO;
-import lk.ijse.db.FactoryConfiguration;
-import lk.ijse.dto.StudentDTO;
-import lk.ijse.tdm.StudyAllStudentTm;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
+import java.io.IOException;
 
 public class DashboardController {
 
     @FXML
-    private BarChart<String, Number> BarChartStu;
+    private JFXButton btnDashboard;
 
     @FXML
-    private Label lblIncom;
+    private JFXButton btnProgram;
 
     @FXML
-    private Label lblTotalInstructor;
+    private JFXButton btnSetting;
 
     @FXML
-    private Label lblTotalPrograms;
+    private JFXButton btnStudent;
 
     @FXML
-    private Label lblTotalStudent;
+    private JFXButton btnView;
 
     @FXML
-    private Label lblStudentCount;
+    private JFXButton btnInstructor;
 
     @FXML
-    private TableView<StudyAllStudentTm> tblStudyAll;
+    private JFXButton btnPayment;
 
     @FXML
-    private TableColumn<StudyAllStudentTm, String> colId;
+    private JFXButton btnLessons;
 
     @FXML
-    private TableColumn<StudyAllStudentTm, String> colName;
+    private AnchorPane changeForm;
 
     @FXML
-    private TableColumn<StudyAllStudentTm, String> colDate;
+    private AnchorPane dashboardFrom;
 
-    @FXML
-    private AnchorPane dashboardForm;
-
-    private final DashboardBO dashboardBO = (DashboardBO) BOFactory.getBO(BOFactory.BOType.DASHBOARD);
-
-    @FXML
     public void initialize() {
-        setCellValueFactory();
-        setTotals();
-        loadTableData();
-        loadStudentChart();
-        loadIncome();
-    }
-
-    private void setCellValueFactory() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
-        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("registrationDate"));
-    }
-
-    private void setTotals() {
-        lblTotalPrograms.setText(String.valueOf(dashboardBO.getCulinaryProgramCount()));
-        lblTotalStudent.setText(String.valueOf(dashboardBO.getStudentCount()));
-        lblTotalInstructor.setText(String.valueOf(dashboardBO.getInstructorCount()));
-    }
-
-    private void loadTableData() {
-        tblStudyAll.getItems().clear();
-        ObservableList<StudyAllStudentTm> studentTms = FXCollections.observableArrayList();
-        List<StudentDTO> allProgramStudents = dashboardBO.getAllProgramStudents();
-
-        for (StudentDTO studentDTO : allProgramStudents) {
-            studentTms.add(new StudyAllStudentTm(
-                    studentDTO.getStudentId(),
-                    studentDTO.getName(),
-                    studentDTO.getRegistrationDate()
-            ));
-        }
-        tblStudyAll.setItems(studentTms);
-        lblStudentCount.setText(String.valueOf(studentTms.size()));
-    }
-
-    private void loadStudentChart() {
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Student Registrations");
-
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-
         try {
-            List<Object[]> results = session.createQuery(
-                            "SELECT MONTH(s.registrationDate), COUNT(s) " +
-                                    "FROM Student s " +
-                                    "GROUP BY MONTH(s.registrationDate)", Object[].class)
-                    .list();
-
-            for (Object[] row : results) {
-                Integer month = ((Number) row[0]).intValue();
-                Integer count = ((Number) row[1]).intValue();
-                String monthName = LocalDate.of(LocalDate.now().getYear(), month, 1)
-                        .getMonth()
-                        .getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-                series.getData().add(new XYChart.Data<>(monthName, count));
-            }
-
-            BarChartStu.getData().clear();
-            BarChartStu.getData().add(series);
-
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Failed to load student chart.").show();
-        } finally {
-            session.close();
+            // Default load dashboard
+            changeForm.getChildren().setAll((Node) FXMLLoader.load(this.getClass().getResource("/dashboard.fxml")));
+            highlightButton(btnDashboard);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void loadIncome() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
+    @FXML
+    void btnDashboardOnAction(ActionEvent event) {
+        loadForm("/dashboard.fxml", btnDashboard);
+    }
 
-        lblIncom.setOpacity(1);   // fully visible
+    @FXML
+    void btnProgramOnAction(ActionEvent event) {
+        loadForm("/programForm.fxml", btnProgram);
+    }
+
+    @FXML
+    void btnStudentOnAction(ActionEvent event) {
+        loadForm("/studentForm.fxml", btnStudent);
+    }
 
 
+
+
+    @FXML
+    void btnInstructorOnAction(ActionEvent event) {
+        loadForm("/instructorForm.fxml", btnInstructor);
+    }
+
+    @FXML
+    void btnPaymentOnAction(ActionEvent event) {
+        loadForm("/paymentTableForm.fxml", btnPayment);
+    }
+
+    @FXML
+    void btnLessonsOnAction(ActionEvent event) {
+        loadForm("/lessonForm.fxml", btnLessons);
+    }
+
+    @FXML
+    void logOutAction(MouseEvent event) {
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
-            int currentYear = LocalDate.now().getYear();
-
-            Double totalIncome = (Double) session.createNativeQuery(
-                            "SELECT SUM(amount) FROM payments " +
-                                    "WHERE MONTH(paymentDate) = :month AND YEAR(paymentDate) = :year")
-                    .setParameter("month", currentMonth)
-                    .setParameter("year", currentYear)
-                    .uniqueResult();
-
-            if (totalIncome == null) totalIncome = 0.0;
-
-            lblIncom.setText(String.format("%.2f", totalIncome));
-
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Failed to load current month income").show();
-        } finally {
-            session.close();
+            Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource("/loginForm.fxml")));
+            Stage stage = (Stage) dashboardFrom.getScene().getWindow();
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    /** Utility method to load forms & highlight active button */
+    private void loadForm(String fxmlPath, JFXButton activeButton) {
+        try {
+            changeForm.getChildren().setAll((Node) FXMLLoader.load(getClass().getResource(fxmlPath)));
+            resetButtonStyles();
+            highlightButton(activeButton);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void highlightButton(JFXButton button){
+        button.setStyle("-fx-background-color: #468A9A; -fx-text-fill: #FFFFFF; -fx-border-color: #FFFFFF; -fx-border-width: 3; -fx-border-radius: 5; -fx-background-radius: 10;");
+    }
+
+    private void resetButtonStyles(){
+        String style = "-fx-background-color: #26667F; -fx-text-fill: #000000; -fx-border-color: #FFFFFF; -fx-border-width: 3; -fx-border-radius: 5; -fx-background-radius: 10;";
+        btnDashboard.setStyle(style);
+        btnProgram.setStyle(style);
+        btnStudent.setStyle(style);
+
+
+        btnInstructor.setStyle(style);
+        btnPayment.setStyle(style);
+        btnLessons.setStyle(style);
+    }
+
+
+    public void btnViewOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnSettingOnAction(ActionEvent actionEvent) {
+        loadForm("/settingForm.fxml", btnSetting);
     }
 }
