@@ -25,7 +25,7 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
-public class Dashboard2Controller {
+public class HomeController {
 
     @FXML
     private BarChart<String, Number> BarChartStu;

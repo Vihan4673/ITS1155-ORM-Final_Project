@@ -62,6 +62,7 @@ public class StudentFormController {
     @FXML
     private TextField txtTel;
 
+
     StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
 
     public void initialize() {

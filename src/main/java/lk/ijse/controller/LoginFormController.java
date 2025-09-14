@@ -59,8 +59,7 @@ public class LoginFormController {
         try {
             String fxmlFile;
 
-            if ("Admin".equalsIgnoreCase(role)) {
-                fxmlFile = "/mainForm.fxml";
+            if ("Admin".equalsIgnoreCase(role)) { fxmlFile = "/Dashboardpage.fxml";
             } else if ("Admissions Coordinator".equalsIgnoreCase(role)) {
                 fxmlFile = "/Dashboardpage.fxml";
             } else {

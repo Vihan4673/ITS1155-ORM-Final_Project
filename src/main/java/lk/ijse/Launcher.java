@@ -18,10 +18,7 @@ public class Launcher extends Application {
         // Initialize Hibernate/Database connection first
         FactoryConfiguration.getInstance();
 
-        // Show loading screen first
-        primaryStage.setScene(new Scene(
-                new FXMLLoader(getClass().getResource("/LoadinScreen.fxml")).load()
-        ));
+
         primaryStage.setResizable(false);
         primaryStage.centerOnScreen();
         primaryStage.show();
@@ -32,7 +29,7 @@ public class Launcher extends Application {
             protected Scene call() throws Exception {
                 // ✅ FIXED path with .fxml
                 return new Scene(
-                        new FXMLLoader(getClass().getResource("/loginForm.fxml")).load()
+                        new FXMLLoader(getClass().getResource("/Dashboardpage.fxml")).load()
                 );
             }
         };
