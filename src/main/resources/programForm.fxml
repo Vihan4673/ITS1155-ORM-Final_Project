@@ -1,130 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="630.0" prefWidth="770.0"
-            style="-fx-background-color: linear-gradient(to bottom, #94ddf3, #FFFFFF);"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane fx:id="courseForm" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f9;"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="lk.ijse.controller.CourseFormController">
 
+   <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0"
+         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <padding>
+         <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+      </padding>
 
-   <HBox layoutX="520.0" layoutY="46.0" spacing="10.0">
-      <children>
+      <HBox alignment="CENTER_LEFT" style="-fx-padding: 20px 30px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-alignment: center-left; -fx-spacing: 15px; -fx-background-radius: 15;">
+         <children>
+            <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@asset/icon/driving-lessons.png"/>
+               </image>
+            </ImageView>
+            <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;"
+                   text="Course Management"/>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="txtSearch" onKeyReleased="#txtSearchKeyReleased" prefHeight="36.0" prefWidth="250.0"
+                             promptText="Search by ID or Name"
+                             style="-fx-background-color: #f0f2f5; -fx-background-radius: 8px; -fx-padding: 8px 15px; -fx-font-size: 14px;"/>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true" HBox.hgrow="NEVER">
+                     <image>
+                        <Image url="@asset/icon/search.png"/>
+                     </image>
+                     <HBox.margin>
+                        <Insets left="-40.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
 
-         <TextField fx:id="txtSearch" promptText="Enter name or ID"
-                    onKeyReleased="#txtSearchKeyReleased" prefWidth="200.0"/>
-      </children>
-   </HBox>
-   <!-- Title -->
-   <Label layoutX="113.0" layoutY="46.0" text="Course Manage">
-      <font>
-         <Font name="DejaVu Serif Condensed Bold" size="30.0"/>
-      </font>
-   </Label>
+      <VBox prefHeight="591.0" prefWidth="946.0" VBox.vgrow="ALWAYS"
+            style="-fx-background-color: white; -fx-background-radius: 20px; -fx-spacing: 25px; -fx-padding: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+         <children>
+            <GridPane hgap="30.0" vgap="20.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" prefWidth="400.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" prefWidth="400.0"/>
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               </rowConstraints>
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-min-width: 90px;" text="ID :"/>
+                        <TextField fx:id="txtId" editable="false" onAction="#txtIdOnAction" onKeyReleased="#txtIdKeyAction" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-min-width: 90px;" text="Name :"/>
+                        <TextField fx:id="txtName" onAction="#txtNameOnAction" onKeyReleased="#txtNameKeyAction" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-min-width: 90px;" text="Duration :"/>
+                        <TextField fx:id="txtDuration" onAction="#txtDurationOnAction" onKeyReleased="#txtDurationKeyAction" HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-weight: normal;" text="(Months)"/>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-min-width: 90px;" text="Fee :"/>
+                        <TextField fx:id="txtFee" onKeyReleased="#txtFeeKeyAction" HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-weight: normal;" text="(LKR)"/>
+                     </children>
+                  </HBox>
+               </children>
+            </GridPane>
 
-   <!-- Icon -->
-   <ImageView fitHeight="48.0" fitWidth="48.0" layoutX="45.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-      <image>
-         <Image url="@asset/icon/driving-lessons.png"/>
-      </image>
-   </ImageView>
+            <HBox alignment="CENTER" spacing="15.0">
+               <children>
+                  <JFXButton onAction="#btnSaveOnAction" prefHeight="40.0" prefWidth="120.0"
+                             style="-fx-background-color: #27ae60; -fx-background-radius: 8px;"
+                             text="💾 Save" textFill="WHITE">
+                     <font>
+                        <Font name="DejaVu Serif Bold" size="16.0"/>
+                     </font>
+                  </JFXButton>
+                  <JFXButton onAction="#btnUpdateOnAction" prefHeight="40.0" prefWidth="120.0"
+                             style="-fx-background-color: #f39c12; -fx-background-radius: 8px;"
+                             text="✏️ Update" textFill="#263238">
+                     <font>
+                        <Font name="DejaVu Serif Bold" size="16.0"/>
+                     </font>
+                  </JFXButton>
+                  <JFXButton onAction="#btnClearOnAction" prefHeight="40.0" prefWidth="120.0"
+                             style="-fx-background-color: #bdc3c7; -fx-background-radius: 8px;"
+                             text="🧹 Clear" textFill="#263238">
+                     <font>
+                        <Font name="DejaVu Serif Bold" size="16.0"/>
+                     </font>
+                  </JFXButton>
+                  <JFXButton onAction="#btnDeleteOnAction" prefHeight="40.0" prefWidth="120.0"
+                             style="-fx-background-color: #c0392b; -fx-background-radius: 8px;"
+                             text="🗑️ Delete" textFill="WHITE">
+                     <font>
+                        <Font name="DejaVu Serif Bold" size="16.0"/>
+                     </font>
+                  </JFXButton>
+               </children>
+            </HBox>
 
-   <!-- ID Field -->
-   <TextField fx:id="txtId" layoutX="162.0" layoutY="157.0" editable="false"
-              onAction="#txtIdOnAction" onKeyReleased="#txtIdKeyAction"/>
-   <Label layoutX="83.0" layoutY="161.0" text="ID :">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="13.0"/>
-      </font>
-   </Label>
-
-   <!-- Program Name -->
-   <TextField fx:id="txtName" layoutX="503.0" layoutY="157.0"
-              onAction="#txtNameOnAction" onKeyReleased="#txtNameKeyAction"/>
-   <Label layoutX="432.0" layoutY="161.0" text="Name :">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="13.0"/>
-      </font>
-   </Label>
-
-   <!-- Duration -->
-   <TextField fx:id="txtDuration" layoutX="162.0" layoutY="217.0"
-              onAction="#txtDurationOnAction" onKeyReleased="#txtDurationKeyAction"/>
-   <Label layoutX="83.0" layoutY="221.0" text="Duration :">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="13.0"/>
-      </font>
-   </Label>
-   <Label layoutX="86.0" layoutY="240.0" text="(Months)">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="11.0"/>
-      </font>
-   </Label>
-
-   <!-- Fee -->
-   <TextField fx:id="txtFee" layoutX="503.0" layoutY="217.0" onKeyReleased="#txtFeeKeyAction"/>
-   <Label layoutX="432.0" layoutY="221.0" text="Fee :">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="13.0"/>
-      </font>
-   </Label>
-   <Label layoutX="430.0" layoutY="238.0" text="(LKR)">
-      <font>
-         <Font name="DejaVu Sans Condensed Bold" size="11.0"/>
-      </font>
-   </Label>
-
-   <!-- Buttons with icons, shifted 1cm down -->
-   <HBox layoutX="207.0" layoutY="305.0" spacing="20.0">
-      <children>
-         <JFXButton onAction="#btnSaveOnAction" prefHeight="35.0" prefWidth="110.0"
-                    style="-fx-background-color: #228B22;" text="💾 Save" textFill="WHITE">
-            <font>
-               <Font name="DejaVu Serif Bold" size="15.0"/>
-            </font>
-         </JFXButton>
-
-         <JFXButton onAction="#btnDeleteOnAction" prefHeight="35.0" prefWidth="110.0"
-                    style="-fx-background-color: #E41B17;" text="🗑️ Delete" textFill="WHITE">
-            <font>
-               <Font name="DejaVu Serif Bold" size="15.0"/>
-            </font>
-         </JFXButton>
-
-         <JFXButton onAction="#btnUpdateOnAction" prefHeight="35.0" prefWidth="110.0"
-                    style="-fx-background-color: #1F45FC;" text="✏️ Update" textFill="WHITE">
-            <font>
-               <Font name="DejaVu Serif Bold" size="15.0"/>
-            </font>
-         </JFXButton>
-
-         <JFXButton onAction="#btnClearOnAction" prefHeight="35.0" prefWidth="110.0"
-                    style="-fx-background-color: #808080;" text="🧹 Clear" textFill="WHITE">
-            <font>
-               <Font name="DejaVu Serif Bold" size="15.0"/>
-            </font>
-         </JFXButton>
-      </children>
-   </HBox>
-
-   <!-- TableView, shifted 1cm up -->
-   <TableView fx:id="tblProgram" layoutX="87.0" layoutY="372.0"
-              onMouseClicked="#tblProgramOnClickAction" prefHeight="200.0" prefWidth="594.0">
-      <columns>
-         <TableColumn fx:id="colId" prefWidth="128.0" text="ID"/>
-         <TableColumn fx:id="colProgramName" prefWidth="178.0" text="Program Name"/>
-         <TableColumn fx:id="colDuration" prefWidth="153.0" text="Duration"/>
-         <TableColumn fx:id="colFee" prefWidth="134.0" text="Fee(LKR)"/>
-      </columns>
-   </TableView>
-
+            <TableView fx:id="tblProgram" onMouseClicked="#tblProgramOnClickAction" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colId" prefWidth="128.0" text="ID"/>
+                  <TableColumn fx:id="colProgramName" prefWidth="178.0" text="Program Name"/>
+                  <TableColumn fx:id="colDuration" prefWidth="153.0" text="Duration"/>
+                  <TableColumn fx:id="colFee" prefWidth="134.0" text="Fee(LKR)"/>
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+               </columnResizePolicy>
+            </TableView>
+         </children>
+      </VBox>
+   </VBox>
 </AnchorPane>

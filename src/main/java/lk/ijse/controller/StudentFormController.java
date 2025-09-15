@@ -25,67 +25,18 @@ import java.util.List;
 
 public class StudentFormController {
 
-    public TextField txtSearch;
-    @FXML
-    private TableColumn<?, ?> colAddress;
+    @FXML private TextField txtSearch, txtAddress, txtId, txtName, txtTel;
+    @FXML private TableColumn<?, ?> colAddress, colId, colName, colRegisterDate, colTel;
+    @FXML private DatePicker registerDatePicker;
+    @FXML private AnchorPane studentForm;
+    @FXML private TableView<StudentTm> tblStudent;
 
-    @FXML
-    private TableColumn<?, ?> colId;
-
-    @FXML
-    private TableColumn<?, ?> colName;
-
-    @FXML
-    private TableColumn<?, ?> colRegisterDate;
-
-    @FXML
-    private TableColumn<?, ?> colTel;
-
-    @FXML
-    private DatePicker registerDatePicker;
-
-    @FXML
-    private AnchorPane studentForm;
-
-    @FXML
-    private TableView<StudentTm> tblStudent;
-
-    @FXML
-    private TextField txtAddress;
-
-    @FXML
-    private TextField txtId;
-
-    @FXML
-    private TextField txtName;
-
-    @FXML
-    private TextField txtTel;
-
-
-    StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
+    private final StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
 
     public void initialize() {
         setCellValueFactory();
         loadAllStudent();
         generateStudentId();
-    }
-
-    private void loadAllStudent() {
-        List<StudentDTO> allStudent = studentBO.getAllStudent();
-        ObservableList<StudentTm> studentTms = FXCollections.observableArrayList();
-
-        for (StudentDTO studentDTO : allStudent) {
-            studentTms.add(new StudentTm(
-                    studentDTO.getStudentId(),
-                    studentDTO.getName(),
-                    studentDTO.getAddress(),
-                    studentDTO.getTel(),
-                    studentDTO.getRegistrationDate(),
-                    null
-            ));
-        }
-        tblStudent.setItems(studentTms);
     }
 
     private void setCellValueFactory() {
@@ -96,9 +47,21 @@ public class StudentFormController {
         colRegisterDate.setCellValueFactory(new PropertyValueFactory<>("registrationDate"));
     }
 
-    @FXML
-    void btnClearOnAction(ActionEvent event) {
-        clearData();
+    private void loadAllStudent() {
+        List<StudentDTO> allStudent = studentBO.getAllStudent();
+        ObservableList<StudentTm> studentTms = FXCollections.observableArrayList();
+
+        for (StudentDTO s : allStudent) {
+            studentTms.add(new StudentTm(
+                    s.getStudentId(),
+                    s.getName(),
+                    s.getAddress(),
+                    s.getTel(),
+                    s.getRegistrationDate(),
+                    null
+            ));
+        }
+        tblStudent.setItems(studentTms);
     }
 
     private void clearData() {
@@ -107,9 +70,14 @@ public class StudentFormController {
         txtAddress.clear();
         txtTel.clear();
         registerDatePicker.setValue(null);
+        generateStudentId();
     }
 
     private StudentDTO getObject() {
+        if (registerDatePicker.getValue() == null) {
+            new Alert(Alert.AlertType.WARNING, "Please select a registration date!").show();
+            return null;
+        }
         return new StudentDTO(
                 txtId.getText(),
                 txtName.getText(),
@@ -120,26 +88,18 @@ public class StudentFormController {
     }
 
     @FXML
-    void btnDeleteOnAction(ActionEvent event) {
-        if (isValidStudent()) {
-            studentBO.deleteStudent(getObject());
-            loadAllStudent();
-            clearData();
-        }
-    }
-
-    @FXML
     void btnSaveOnAction(ActionEvent event) {
         if (isValidStudent()) {
-            studentBO.saveStudent(getObject());
+            StudentDTO dto = getObject();
+            if (dto == null) return;
+
+            studentBO.saveStudent(dto);
             clearData();
             loadAllStudent();
 
-
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/paymentForm.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/paymentForm.fxml"));
                 Parent root = loader.load();
-
                 Stage stage = new Stage();
                 stage.setTitle("Payment Form");
                 stage.setScene(new Scene(root));
@@ -148,20 +108,38 @@ public class StudentFormController {
                 e.printStackTrace();
                 new Alert(Alert.AlertType.ERROR, "Failed to open Payment Form!").show();
             }
-
         } else {
-            new Alert(Alert.AlertType.WARNING, "Please Enter All Fields !!").show();
+            new Alert(Alert.AlertType.WARNING, "Please enter all fields!").show();
         }
     }
-
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
         if (isValidStudent()) {
-            studentBO.updateStudent(getObject());
+            StudentDTO dto = getObject();
+            if (dto == null) return;
+
+            studentBO.updateStudent(dto);
             clearData();
             loadAllStudent();
         }
+    }
+
+    @FXML
+    void btnDeleteOnAction(ActionEvent event) {
+        if (isValidStudent()) {
+            StudentDTO dto = getObject();
+            if (dto == null) return;
+
+            studentBO.deleteStudent(dto);
+            loadAllStudent();
+            clearData();
+        }
+    }
+
+    @FXML
+    void btnClearOnAction(ActionEvent event) {
+        clearData();
     }
 
     @FXML
@@ -181,63 +159,34 @@ public class StudentFormController {
         if (!Regex.setTextColor(lk.ijse.util.TextField.NAME, txtName)) return false;
         if (!Regex.setTextColor(lk.ijse.util.TextField.ADDRESS, txtAddress)) return false;
         if (!Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel)) return false;
-        if (txtId.getText().isEmpty() || registerDatePicker.getValue() == null) return false;
-        return true;
+        return !(txtId.getText().isEmpty() || registerDatePicker.getValue() == null);
     }
 
-    @FXML
-    void txtAddressKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.ADDRESS, txtAddress);
-    }
-
-    @FXML
-    void txtNameKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.NAME, txtName);
-    }
-
-    @FXML
-    void txtTelKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel);
-    }
-
-    @FXML
-    void txtIdKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.STUDENTID, txtId);
-    }
-
-    public void txtIdOnAction(ActionEvent actionEvent) {
-    }
-
-    public void txtNameOnAction(ActionEvent actionEvent) {
-    }
-
-    public void txtAddressOnAction(ActionEvent actionEvent) {
-    }
+    @FXML void txtAddressKeyAction(KeyEvent e) { Regex.setTextColor(lk.ijse.util.TextField.ADDRESS, txtAddress); }
+    @FXML void txtNameKeyAction(KeyEvent e) { Regex.setTextColor(lk.ijse.util.TextField.NAME, txtName); }
+    @FXML void txtTelKeyAction(KeyEvent e) { Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel); }
+    @FXML void txtIdKeyAction(KeyEvent e) { Regex.setTextColor(lk.ijse.util.TextField.STUDENTID, txtId); }
 
     @FXML
     public void txtSearchKeyReleased(KeyEvent keyEvent) {
-        String searchText = txtSearch.getText().toLowerCase(); // search text
-
-        // Original list from DB
+        String searchText = txtSearch.getText().toLowerCase();
         List<StudentDTO> allStudent = studentBO.getAllStudent();
         ObservableList<StudentTm> filteredList = FXCollections.observableArrayList();
 
-        for (StudentDTO studentDTO : allStudent) {
-            if (studentDTO.getStudentId().toLowerCase().contains(searchText) ||
-                    studentDTO.getName().toLowerCase().contains(searchText)) {
-
+        for (StudentDTO s : allStudent) {
+            if (s.getStudentId().toLowerCase().contains(searchText) ||
+                    s.getName().toLowerCase().contains(searchText)) {
                 filteredList.add(new StudentTm(
-                        studentDTO.getStudentId(),
-                        studentDTO.getName(),
-                        studentDTO.getAddress(),
-                        studentDTO.getTel(),
-                        studentDTO.getRegistrationDate(),
+                        s.getStudentId(),
+                        s.getName(),
+                        s.getAddress(),
+                        s.getTel(),
+                        s.getRegistrationDate(),
                         null
                 ));
             }
         }
-
-        tblStudent.setItems(filteredList); // update TableView
+        tblStudent.setItems(filteredList);
     }
 
     private void generateStudentId() {
@@ -246,4 +195,7 @@ public class StudentFormController {
         txtId.setEditable(false);
     }
 
+    public void txtIdOnAction(ActionEvent e) {}
+    public void txtNameOnAction(ActionEvent e) {}
+    public void txtAddressOnAction(ActionEvent e) {}
 }
