@@ -3,8 +3,11 @@ package lk.ijse;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lk.ijse.db.FactoryConfiguration;
 
 public class Launcher extends Application {
@@ -14,38 +17,71 @@ public class Launcher extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        // Initialize Hibernate/Database connection first
-        FactoryConfiguration.getInstance();
+    public void start(Stage primaryStage) {
+        Stage loadingStage = new Stage();
+        try {
+            Parent loadingRoot = FXMLLoader.load(getClass().getResource("/LoadinScreen.fxml"));
+            Scene loadingScene = new Scene(loadingRoot);
+            loadingScene.setFill(Color.TRANSPARENT);
 
+            loadingStage.setScene(loadingScene);
+            loadingStage.initStyle(StageStyle.TRANSPARENT);
+            loadingStage.setResizable(false);
+            loadingStage.centerOnScreen();
+            loadingStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to load loading screen!");
+        }
 
-        primaryStage.setResizable(false);
-        primaryStage.centerOnScreen();
-        primaryStage.show();
-
-        // Load Login Form in background (Task)
-        Task<Scene> loadingTask = new Task<>() {
+        // Task 1: Initialize Database/Hibernate
+        Task<Void> initTask = new Task<>() {
             @Override
-            protected Scene call() throws Exception {
-                // ✅ FIXED path with .fxml
-                return new Scene(
-                        new FXMLLoader(getClass().getResource("/Dashboardpage.fxml")).load()
-                );
+            protected Void call() throws Exception {
+                FactoryConfiguration.getInstance();
+                Thread.sleep(1000); // optional: simulate loading delay
+                return null;
             }
         };
 
-        loadingTask.setOnSucceeded(event -> {
-            Scene loginScene = loadingTask.getValue();
-            primaryStage.setScene(loginScene);
-            primaryStage.setTitle("Login");
-            primaryStage.centerOnScreen();
+        // When DB initialized successfully
+        initTask.setOnSucceeded(event -> {
+            // Task 2: Load Login Form
+            Task<Parent> loginLoadTask = new Task<>() {
+                @Override
+                protected Parent call() throws Exception {
+                    return FXMLLoader.load(getClass().getResource("/loginForm.fxml"));
+                }
+            };
+
+            loginLoadTask.setOnSucceeded(e -> {
+                loadingStage.close(); // close loading screen
+                Parent loginRoot = loginLoadTask.getValue();
+                Scene loginScene = new Scene(loginRoot);
+
+                Stage loginStage = new Stage();
+                loginStage.setScene(loginScene);
+                loginStage.setTitle("Wimal Villa - Login");
+                loginStage.setResizable(true);
+                loginStage.centerOnScreen();
+                loginStage.show();
+            });
+
+            loginLoadTask.setOnFailed(e -> {
+                loadingStage.close();
+                System.err.println("Failed to load Login Form!");
+                loginLoadTask.getException().printStackTrace();
+            });
+
+            new Thread(loginLoadTask).start();
         });
 
-        loadingTask.setOnFailed(event -> {
-            System.err.println("❌ Failed to load Login Form!");
-            loadingTask.getException().printStackTrace();
+        initTask.setOnFailed(event -> {
+            loadingStage.close();
+            System.err.println("Database initialization failed!");
+            initTask.getException().printStackTrace();
         });
 
-        new Thread(loadingTask).start();
+        new Thread(initTask).start();
     }
 }

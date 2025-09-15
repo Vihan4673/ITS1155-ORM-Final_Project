@@ -42,9 +42,7 @@ public class HomeController {
     @FXML
     private Label lblTotalStudent;
 
-    @FXML
-    private Label lblStudentCount;
-
+    // ❌ Not used in FXML - removed lblStudentCount
     @FXML
     private TableView<StudyAllStudentTm> tblStudyAll;
 
@@ -78,35 +76,47 @@ public class HomeController {
     }
 
     private void setTotals() {
-        lblTotalPrograms.setText(String.valueOf(dashboardBO.getCulinaryProgramCount()));
-        lblTotalStudent.setText(String.valueOf(dashboardBO.getStudentCount()));
-        lblTotalInstructor.setText(String.valueOf(dashboardBO.getInstructorCount()));
+        try {
+            lblTotalPrograms.setText(String.valueOf(dashboardBO.getCulinaryProgramCount()));
+            lblTotalStudent.setText(String.valueOf(dashboardBO.getStudentCount()));
+            lblTotalInstructor.setText(String.valueOf(dashboardBO.getInstructorCount()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load totals!").show();
+        }
     }
 
     private void loadTableData() {
-        tblStudyAll.getItems().clear();
-        ObservableList<StudyAllStudentTm> studentTms = FXCollections.observableArrayList();
-        List<StudentDTO> allProgramStudents = dashboardBO.getAllProgramStudents();
+        try {
+            tblStudyAll.getItems().clear();
+            ObservableList<StudyAllStudentTm> studentTms = FXCollections.observableArrayList();
+            List<StudentDTO> allProgramStudents = dashboardBO.getAllProgramStudents();
 
-        for (StudentDTO studentDTO : allProgramStudents) {
-            studentTms.add(new StudyAllStudentTm(
-                    studentDTO.getStudentId(),
-                    studentDTO.getName(),
-                    studentDTO.getRegistrationDate()
-            ));
+            for (StudentDTO studentDTO : allProgramStudents) {
+                studentTms.add(new StudyAllStudentTm(
+                        studentDTO.getStudentId(),
+                        studentDTO.getName(),
+                        studentDTO.getRegistrationDate()
+                ));
+            }
+            tblStudyAll.setItems(studentTms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load recent student data!").show();
         }
-        tblStudyAll.setItems(studentTms);
-        lblStudentCount.setText(String.valueOf(studentTms.size()));
     }
 
     private void loadStudentChart() {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Student Registrations");
 
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
+        Session session = null;
+        Transaction transaction = null;
 
         try {
+            session = FactoryConfiguration.getInstance().getSession();
+            transaction = session.beginTransaction();
+
             List<Object[]> results = session.createQuery(
                             "SELECT MONTH(s.registrationDate), COUNT(s) " +
                                     "FROM Student s " +
@@ -127,22 +137,22 @@ public class HomeController {
 
             transaction.commit();
         } catch (Exception e) {
-            transaction.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to load student chart.").show();
         } finally {
-            session.close();
+            if (session != null) session.close();
         }
     }
 
     private void loadIncome() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-
-
-
+        Session session = null;
+        Transaction transaction = null;
 
         try {
+            session = FactoryConfiguration.getInstance().getSession();
+            transaction = session.beginTransaction();
+
             int currentMonth = LocalDate.now().getMonthValue();
             int currentYear = LocalDate.now().getYear();
 
@@ -155,15 +165,15 @@ public class HomeController {
 
             if (totalIncome == null) totalIncome = 0.0;
 
-            lblIncom.setText(String.format("%.2f", totalIncome));
+            lblIncom.setText("LKR " + String.format("%.2f", totalIncome));
 
             transaction.commit();
         } catch (Exception e) {
-            transaction.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to load current month income").show();
         } finally {
-            session.close();
+            if (session != null) session.close();
         }
     }
 }

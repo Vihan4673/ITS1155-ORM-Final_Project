@@ -59,7 +59,8 @@ public class LoginFormController {
         try {
             String fxmlFile;
 
-            if ("Admin".equalsIgnoreCase(role)) { fxmlFile = "/Dashboardpage.fxml";
+            if ("Admin".equalsIgnoreCase(role)) {
+                fxmlFile = "/Dashboardpage.fxml";
             } else if ("Admissions Coordinator".equalsIgnoreCase(role)) {
                 fxmlFile = "/Dashboardpage.fxml";
             } else {
@@ -69,9 +70,12 @@ public class LoginFormController {
 
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource(fxmlFile)));
             Stage stage = (Stage) fullLoginForm.getScene().getWindow();
+
             stage.setScene(scene);
+            stage.setTitle("Wimal Villa - Dashboard");
+            stage.setResizable(true);    // allow resizing before maximize
+            stage.setMaximized(true);    // ✅ full-screen maximize
             stage.centerOnScreen();
-            stage.setResizable(false);
             stage.show();
 
         } catch (IOException e) {

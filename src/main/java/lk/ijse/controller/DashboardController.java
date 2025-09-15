@@ -109,7 +109,7 @@ public class DashboardController {
     }
 
     @FXML
-    void logOutAction(MouseEvent event) {
+    void logOutAction(ActionEvent event) {
         try {
             Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource("/loginForm.fxml")));
             Stage stage = (Stage) dashboardFrom.getScene().getWindow();
