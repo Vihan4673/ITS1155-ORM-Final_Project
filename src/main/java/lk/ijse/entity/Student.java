@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,6 @@ public class Student {
     private Long tel;
     private Date registrationDate;
     private int someInt;
-
 
     @ManyToMany
     @JoinTable(
@@ -52,7 +50,6 @@ public class Student {
         this.lessons = new ArrayList<>();
         this.payments = new ArrayList<>();
     }
-
 
     public Student(String studentId) {
         this.studentId = studentId;

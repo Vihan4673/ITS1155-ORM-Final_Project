@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class course {
     private String programName;
 
     @Column(nullable = false)
-    private int duration; // in months
+    private int duration;
 
     @Column(nullable = false)
     private double fee;
@@ -38,7 +37,7 @@ public class course {
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
-    // Existing constructor
+
     public course(String programId, String programName, int duration, double fee) {
         this.programId = programId;
         this.programName = programName;

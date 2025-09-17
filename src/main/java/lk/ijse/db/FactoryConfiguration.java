@@ -14,7 +14,7 @@ public class FactoryConfiguration {
 
     private FactoryConfiguration() {
         try {
-            // Load hibernate.properties from resources folder
+
             Properties properties = new Properties();
             InputStream input = getClass().getResourceAsStream("/hibernate.properties");
             if (input == null) {
@@ -22,7 +22,6 @@ public class FactoryConfiguration {
             }
             properties.load(input);
 
-            // Hibernate Configuration
             Configuration configuration = new Configuration();
             configuration.setProperties(properties)
                     .addAnnotatedClass(User.class)
@@ -32,7 +31,7 @@ public class FactoryConfiguration {
                     .addAnnotatedClass(Payment.class)
                     .addAnnotatedClass(Student.class);
 
-            // Build SessionFactory
+
             sessionFactory = configuration.buildSessionFactory();
             System.out.println("Hibernate SessionFactory created successfully, DB should be ready!");
         } catch (Exception e) {

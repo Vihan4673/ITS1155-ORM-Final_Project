@@ -44,7 +44,7 @@ public class Launcher extends Application {
             }
         };
 
-        // When DB initialized successfully
+
         initTask.setOnSucceeded(event -> {
             // Task 2: Load Login Form
             Task<Parent> loginLoadTask = new Task<>() {
@@ -61,7 +61,7 @@ public class Launcher extends Application {
 
                 Stage loginStage = new Stage();
                 loginStage.setScene(loginScene);
-                loginStage.setTitle("Wimal Villa - Login");
+                loginStage.setTitle("The Elite Driving School");
                 loginStage.setResizable(true);
                 loginStage.centerOnScreen();
                 loginStage.show();

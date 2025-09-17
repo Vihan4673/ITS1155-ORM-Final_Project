@@ -14,7 +14,7 @@
 
 <AnchorPane fx:id="courseForm" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f9;"
             xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="lk.ijse.controller.CouseFormController">
+            fx:controller="lk.ijse.controller.CourseFormController">
 
     <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

@@ -134,7 +134,6 @@
                      </children>
                   </HBox>
 
-                  <!-- Table -->
                   <TableView fx:id="tblStudent" onMouseClicked="#tblStudentOnClickAction" prefHeight="300.0" prefWidth="840.0">
                      <columns>
                         <TableColumn fx:id="colId" prefWidth="100.0" text="ID" />

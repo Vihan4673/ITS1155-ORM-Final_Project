@@ -15,8 +15,6 @@ import lk.ijse.bo.custom.CourseBO;
 import lk.ijse.dto.courseDTO;
 import lk.ijse.tdm.courseTM;
 import lk.ijse.util.Regex;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class CourseFormController {
 
     public void initialize() {
         setCellValueFactory();
-        txtId.setText(programBO.generateProgramId()); // auto-generate ID
+        txtId.setText(programBO.generateProgramId());
         loadAllPrograms();
     }
 

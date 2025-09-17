@@ -28,7 +28,7 @@ public class Payment {
     private Date paymentDate;
 
     @Column(nullable = false)
-    private String status; // COMPLETED, PENDING, FAILEDD
+    private String status;
 
 
 
