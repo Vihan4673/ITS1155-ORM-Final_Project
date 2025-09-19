@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -8,49 +9,81 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
 
-<AnchorPane prefHeight="458.0" prefWidth="600" style="-fx-background-color: linear-gradient(to bottom, #94ddf3, #FFFFFF);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.PaymentFormController">
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f9;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.PaymentFormController">
 
-    <children>
+    <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+        </padding>
 
-        <!-- Title -->
-        <Label layoutX="200.0" layoutY="30.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Payment Management" />
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 20px 30px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-alignment: center-left; -fx-spacing: 15px; -fx-background-radius: 15;">
+            <children>
+                <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@asset/icon/credit-card.png"/>
+                    </image>
+                </ImageView>
+                <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Payment Management"/>
+            </children>
+        </HBox>
 
-        <!-- Payment ID -->
-        <Label layoutX="80" layoutY="100" style="-fx-font-weight: bold;" text="Payment ID:" />
-        <TextField fx:id="txtPaymentId" layoutX="200" layoutY="95" prefWidth="250" />
+        <VBox VBox.vgrow="ALWAYS" alignment="CENTER" spacing="25.0" style="-fx-background-color: white; -fx-background-radius: 20px; -fx-padding: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+            <children>
+                <GridPane hgap="30.0" vgap="20.0" alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="150.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="300.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Payment ID:"/>
+                        <TextField fx:id="txtPaymentId" GridPane.columnIndex="1"/>
 
-        <!-- Student -->
-        <Label layoutX="80" layoutY="150" style="-fx-font-weight: bold;" text="Student:" />
-        <ComboBox fx:id="cmbStudent" layoutX="200" layoutY="145" prefWidth="250" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Student:" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="cmbStudent" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <!-- Program -->
-        <Label layoutX="80" layoutY="200" style="-fx-font-weight: bold;" text="Program:" />
-        <ComboBox fx:id="cmbProgram" layoutX="200" layoutY="195" prefWidth="250" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Program:" GridPane.rowIndex="2"/>
+                        <ComboBox fx:id="cmbProgram" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <!-- Amount -->
-        <Label layoutX="80" layoutY="250" style="-fx-font-weight: bold;" text="Amount:" />
-        <TextField fx:id="txtAmount" layoutX="200" layoutY="245" prefWidth="250" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Amount:" GridPane.rowIndex="3"/>
+                        <TextField fx:id="txtAmount" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-        <!-- Payment Date -->
-        <Label layoutX="80" layoutY="300" style="-fx-font-weight: bold;" text="Payment Date:" />
-        <DatePicker fx:id="dpPaymentDate" layoutX="200" layoutY="295" prefWidth="250" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Payment Date:" GridPane.rowIndex="4"/>
+                        <DatePicker fx:id="dpPaymentDate" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <!-- Status -->
-        <Label layoutX="80" layoutY="350" style="-fx-font-weight: bold;" text="Status:" />
-        <ComboBox fx:id="cmbStatus" layoutX="200" layoutY="345" prefWidth="250" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Status:" GridPane.rowIndex="5"/>
+                        <ComboBox fx:id="cmbStatus" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                    </children>
+                </GridPane>
 
-        <!-- Buttons -->
-        <Button fx:id="btnMakePayment" layoutX="287.0" layoutY="400.0" onAction="#btnMakePaymentOnAction" prefHeight="31.0" prefWidth="149.0" style="-fx-font-weight: bold; -fx-background-color: #0f933d;" text="💳 Make Payment" textFill="WHITE" />
-
-        <Button fx:id="btnCancel" layoutX="460.0" layoutY="400.0" onAction="#btnCancelOnAction" prefWidth="100" style="-fx-font-weight: bold; -fx-background-color: red;" text="❌ Cancel" textFill="WHITE" />
-
-        <!-- Icon -->
-        <ImageView fitHeight="46.0" fitWidth="48.0" layoutX="101.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@asset/icon/credit-card.png" />
-            </image>
-        </ImageView>
-
-    </children>
+                <HBox alignment="CENTER" spacing="15.0">
+                    <children>
+                        <JFXButton onAction="#btnMakePaymentOnAction" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #27ae60; -fx-background-radius: 8px;" text="💳 Make Payment" textFill="WHITE">
+                            <font>
+                                <Font name="DejaVu Serif Bold" size="16.0"/>
+                            </font>
+                        </JFXButton>
+                        <JFXButton onAction="#btnCancelOnAction" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #c0392b; -fx-background-radius: 8px;" text="❌ Cancel" textFill="WHITE">
+                            <font>
+                                <Font name="DejaVu Serif Bold" size="16.0"/>
+                            </font>
+                        </JFXButton>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </VBox>
 </AnchorPane>

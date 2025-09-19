@@ -73,8 +73,8 @@ public class LoginFormController {
 
             stage.setScene(scene);
             stage.setTitle("Wimal Villa - Dashboard");
-            stage.setResizable(true);    // allow resizing before maximize
-            stage.setMaximized(true);    // ✅ full-screen maximize
+            stage.setResizable(true);
+            stage.setMaximized(true);
             stage.centerOnScreen();
             stage.show();
 
@@ -86,7 +86,6 @@ public class LoginFormController {
     @FXML
     void goToSignUpOnAction(ActionEvent event) {
         try {
-            // Make sure the FXML file exists under src/main/resources
             AnchorPane signUpPane = FXMLLoader.load(getClass().getResource("/signUpForm.fxml"));
             loginForm.getChildren().setAll(signUpPane);
         } catch (IOException e) {
