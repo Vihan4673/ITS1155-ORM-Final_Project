@@ -108,6 +108,18 @@
                             </ImageView>
                         </graphic>
                     </JFXButton>
+               <JFXButton fx:id="btnSettings" onAction="#btSettingsOnAction" prefHeight="50.0" prefWidth="210.0" style="-fx-background-color: #34495e; -fx-background-radius: 8;" text="Settings" textFill="WHITE">
+                  <font>
+                     <Font name="DejaVu Sans Condensed Bold" size="16.0" />
+                  </font>
+                  <graphic>
+                     <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
+                        <image>
+                           <Image url="@asset/icon/cogwheel.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+               </JFXButton>
                 </VBox>
 
                 <AnchorPane>
@@ -127,7 +139,7 @@
             </children>
         </VBox>
 
-        <AnchorPane fx:id="changeForm" HBox.hgrow="ALWAYS" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: #f0f2f5;">
+        <AnchorPane fx:id="changeForm" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: #f0f2f5;" HBox.hgrow="ALWAYS">
             <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>

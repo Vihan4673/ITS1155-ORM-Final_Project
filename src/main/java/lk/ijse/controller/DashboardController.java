@@ -106,6 +106,8 @@ public class DashboardController {
     void btnLessonsOnAction(ActionEvent event) {
         loadForm("/lessonForm.fxml", btnLessons);
     }
+    @FXML
+    void btSettingsOnAction(ActionEvent event)  {loadForm("/settingForm.fxml", btnLessons);}
 
     @FXML
     void logOutAction(ActionEvent event) {
