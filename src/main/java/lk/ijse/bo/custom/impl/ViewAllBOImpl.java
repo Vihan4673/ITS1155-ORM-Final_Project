@@ -1,40 +1,40 @@
 package lk.ijse.bo.custom.impl;
 
-
 import lk.ijse.bo.custom.ViewAllBO;
 import lk.ijse.dao.DAOFactory;
 import lk.ijse.dao.custom.CourseDAO;
 import lk.ijse.dao.custom.QueryDAO;
-import lk.ijse.dto.courseDTO;
-import lk.ijse.entity.course;
+import lk.ijse.dto.CourseDTO;
+import lk.ijse.entity.Course;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAllBOImpl implements ViewAllBO {
 
-    CourseDAO culinaryProgramDAO = (CourseDAO) DAOFactory.getDAO(DAOFactory.DAOType.PROGRAM);
-    QueryDAO queryDAO = (QueryDAO) DAOFactory.getDAO(DAOFactory.DAOType.QUERY);
+    private final CourseDAO courseDAO = (CourseDAO) DAOFactory.getDAO(DAOFactory.DAOType.PROGRAM);
+    private final QueryDAO queryDAO = (QueryDAO) DAOFactory.getDAO(DAOFactory.DAOType.QUERY);
 
     @Override
-    public List<courseDTO> getAllCulinaryProgram() {
-        List<course> allCulinaryProgram = culinaryProgramDAO.getAllCulinaryProgram();
-        List<courseDTO> allCulinaryProgramDTO = new ArrayList<>();
+    public List<CourseDTO> getAllCourses() {
+        List<Course> allCourses = courseDAO.getAllCourses();
+        List<CourseDTO> allCoursesDTO = new ArrayList<>();
 
-        for (course culinaryProgram : allCulinaryProgram) {
-            allCulinaryProgramDTO.add(new courseDTO(
-                    culinaryProgram.getProgramId(),
-                    culinaryProgram.getProgramName(),
-                    culinaryProgram.getDuration(),
-                    culinaryProgram.getFee(),
-                  null
+        for (Course course : allCourses) {
+            allCoursesDTO.add(new CourseDTO(
+                    course.getProgramId(),
+                    course.getProgramName(),
+                    course.getDuration(), // stored in months
+                    course.getFee(),
+                    null // optional payments list
             ));
         }
 
-        return allCulinaryProgramDTO;
+        return allCoursesDTO;
     }
+
     @Override
-    public List<Object[]> getAllEqualByProgramName(String programName){
+    public List<Object[]> getAllEqualByProgramName(String programName) {
         return queryDAO.getAllEqualByProgramName(programName);
     }
 }

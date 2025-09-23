@@ -1,10 +1,9 @@
 package lk.ijse.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.sql.Timestamp;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lessons")
@@ -14,23 +13,24 @@ import java.sql.Timestamp;
 public class Lesson {
 
     @Id
+    @Column(length = 10)
     private String lessonId;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private course course;
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
     @ManyToOne
-    @JoinColumn(name = "instructor_id")
+    @JoinColumn(name = "instructor_id", nullable = false)
     private Instructor instructor;
 
     @Column(nullable = false)
-    private Timestamp lessonDate;
+    private LocalDateTime lessonDate;
 
     @Column(nullable = false)
-    private int duration;
+    private int duration; // duration in minutes or hours depending on your application
 }

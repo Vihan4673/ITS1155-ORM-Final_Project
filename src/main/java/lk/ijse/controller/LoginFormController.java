@@ -43,7 +43,7 @@ public class LoginFormController {
 
                 if (PasswordStorage.checkPassword(inputPassword.getText().trim(), loginUser.getPassword())) {
                     userDTO = loginUser;
-                    openMainForm(loginUser.getRole());
+                    openMainForm(loginUser);  // pass the whole userDTO
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Invalid User Password !!").show();
                 }
@@ -55,23 +55,29 @@ public class LoginFormController {
         }
     }
 
-    private void openMainForm(String role) {
+    private void openMainForm(UserDTO user) {
         try {
             String fxmlFile;
 
-            if ("Admin".equalsIgnoreCase(role)) {
-                fxmlFile = "/Dashboardpage.fxml";
-            } else if ("Admissions Coordinator".equalsIgnoreCase(role)) {
-                fxmlFile = "/Dashboardpage.fxml";
+            if ("Admin".equalsIgnoreCase(user.getRole())) {
+                fxmlFile = "/View/Dashboardpage.fxml";  // Admin dashboard
+            } else if ("Admissions Coordinator".equalsIgnoreCase(user.getRole()) ||
+                    "Receptionist".equalsIgnoreCase(user.getRole())) {
+                fxmlFile = "/View/Dashboardpage2.fxml"; // Receptionist / Coordinator dashboard
             } else {
-                new Alert(Alert.AlertType.ERROR, "Unknown role: " + role).show();
+                new Alert(Alert.AlertType.ERROR, "Unknown role: " + user.getRole()).show();
                 return;
             }
 
-            Scene scene = new Scene(FXMLLoader.load(getClass().getResource(fxmlFile)));
-            Stage stage = (Stage) fullLoginForm.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            AnchorPane root = loader.load();
 
-            stage.setScene(scene);
+            // Get the controller of the loaded dashboard
+            DashboardController controller = loader.getController();
+            controller.setUserInfo(user.getName(), user.getRole()); // set name & role
+
+            Stage stage = (Stage) fullLoginForm.getScene().getWindow();
+            stage.setScene(new Scene(root));
             stage.setTitle("Wimal Villa - Dashboard");
             stage.setResizable(true);
             stage.setMaximized(true);
@@ -86,7 +92,7 @@ public class LoginFormController {
     @FXML
     void goToSignUpOnAction(ActionEvent event) {
         try {
-            AnchorPane signUpPane = FXMLLoader.load(getClass().getResource("/signUpForm.fxml"));
+            AnchorPane signUpPane = FXMLLoader.load(getClass().getResource("/View/signUpForm.fxml"));
             loginForm.getChildren().setAll(signUpPane);
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR, "Cannot load Sign Up form!").show();

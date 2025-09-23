@@ -1,7 +1,7 @@
 package lk.ijse.dao.custom.impl;
 
 import lk.ijse.dao.custom.InstructorDAO;
-import lk.ijse.db.FactoryConfiguration;
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.entity.Instructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,6 +19,12 @@ public class InstructorDAOImpl implements InstructorDAO {
         transaction.commit();
         session.close();
         return true;
+    }
+    @Override
+    public Instructor findById(String id) {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.get(Instructor.class, id);
+        }
     }
 
     @Override

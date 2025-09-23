@@ -1,22 +1,26 @@
 package lk.ijse.dao.custom;
 
 import lk.ijse.dao.SuperDAO;
-import lk.ijse.dto.courseDTO;
-import lk.ijse.entity.course;
+import lk.ijse.dto.CourseDTO;
+import lk.ijse.entity.Course;
 
 import java.util.List;
 
 public interface CourseDAO extends SuperDAO {
 
-    void saveCulinaryProgram(course culinaryProgram);
-    void deleteCulinaryProgram(course culinaryProgram);
-    void updateCulinaryProgram(course culinaryProgram);
-    List<course> getAllCulinaryProgram();
-    courseDTO getProgramsCheckName(String programName);
-    course getCulinaryProgram(String programId);
-    Long getCulinaryProgramCount();
+    // CRUD operations
+    void saveCourse(Course course);
+    void updateCourse(Course course);
+    void deleteCourse(Course course);
 
-    String generateProgramId(); // new
-    course findById(String id);
-    List<course> findAll();
+    // Read operations
+    List<Course> getAllCourses();
+    Course getCourse(String programId);
+    Course findById(String programId);
+    List<Course> findAll();
+
+    // Utility methods
+    CourseDTO getCourseByName(String programName); // Check course by name
+    Long getCourseCount(); // Total number of courses
+    String generateCourseId(); // Auto-generate new course ID
 }

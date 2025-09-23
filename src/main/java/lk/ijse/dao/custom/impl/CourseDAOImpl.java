@@ -1,9 +1,9 @@
 package lk.ijse.dao.custom.impl;
 
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.dao.custom.CourseDAO;
-import lk.ijse.db.FactoryConfiguration;
-import lk.ijse.dto.courseDTO;
-import lk.ijse.entity.course;
+import lk.ijse.dto.CourseDTO;
+import lk.ijse.entity.Course;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -13,120 +13,120 @@ import java.util.List;
 public class CourseDAOImpl implements CourseDAO {
 
     @Override
-    public void saveCulinaryProgram(course culinaryProgram) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(culinaryProgram);
-        transaction.commit();
-        session.close();
+    public void saveCourse(Course course) {
+        Transaction transaction = null;
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            session.save(course);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+        }
     }
 
     @Override
-    public void deleteCulinaryProgram(course culinaryProgram) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        session.delete(culinaryProgram);
-        transaction.commit();
-        session.close();
+    public void deleteCourse(Course course) {
+        Transaction transaction = null;
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            Course managedCourse = session.get(Course.class, course.getProgramId());
+            if (managedCourse != null) {
+                session.delete(managedCourse);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+        }
     }
 
     @Override
-    public void updateCulinaryProgram(course culinaryProgram) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        session.update(culinaryProgram);
-        transaction.commit();
-        session.close();
+    public void updateCourse(Course course) {
+        Transaction transaction = null;
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            session.merge(course);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+        }
     }
 
     @Override
-    public List<course> getAllCulinaryProgram() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        List<course> list = session.createQuery("from course", course.class).list();
-        transaction.commit();
-        session.close();
-        return list;
+    public List<Course> getAllCourses() {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.createQuery("FROM Course", Course.class).list();
+        }
     }
 
     @Override
-    public courseDTO getProgramsCheckName(String programName) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-
-        Query<course> query = session.createQuery("FROM course c WHERE c.programName = :programName", course.class);
-        query.setParameter("programName", programName);
-        course result = query.uniqueResult();
-
-        transaction.commit();
-        session.close();
-
-        if (result != null) {
-
-            return new courseDTO(
-                    result.getProgramId(),
-                    result.getProgramName(),
-                    result.getDuration(),
-                    result.getFee()
+    public CourseDTO getCourseByName(String programName) {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            Query<Course> query = session.createQuery(
+                    "FROM Course c WHERE c.programName = :programName", Course.class
             );
-        } else {
-            return null;
+            query.setParameter("programName", programName);
+            Course result = query.uniqueResult();
+
+            if (result != null) {
+                return new CourseDTO(
+                        result.getProgramId(),
+                        result.getProgramName(),
+                        result.getDuration(),
+                        result.getFee(),
+                        "Months" // මෙතන unit එක provide කරන්න
+                );
+            } else {
+                return null;
+            }
+        }
+    }
+
+
+    @Override
+    public Course getCourse(String programId) {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.get(Course.class, programId);
         }
     }
 
     @Override
-    public course getCulinaryProgram(String programId) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        course program = session.get(course.class, programId);
-        transaction.commit();
-        session.close();
-        return program;
-    }
-
-    @Override
-    public Long getCulinaryProgramCount() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        Long count = session.createQuery("SELECT COUNT(c) FROM course c", Long.class).uniqueResult();
-        transaction.commit();
-        session.close();
-        return count;
-    }
-
-    @Override
-    public String generateProgramId() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-
-        String lastId = (String) session.createQuery("SELECT c.programId FROM course c ORDER BY c.programId DESC")
-                .setMaxResults(1)
-                .uniqueResult();
-
-        transaction.commit();
-        session.close();
-
-        if (lastId != null) {
-            int newId = Integer.parseInt(lastId.replace("P", "")) + 1;
-            return String.format("P%03d", newId);
-        } else {
-            return "P001";
+    public Long getCourseCount() {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.createQuery("SELECT COUNT(c) FROM Course c", Long.class).uniqueResult();
         }
     }
 
     @Override
-    public course findById(String id) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        course c = session.get(course.class, id);
-        session.close();
-        return c;
+    public String generateCourseId() {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            String lastId = (String) session.createQuery(
+                            "SELECT c.programId FROM Course c WHERE c.programId LIKE 'C%' ORDER BY c.programId DESC")
+                    .setMaxResults(1)
+                    .uniqueResult();
+
+            if (lastId != null) {
+                int newId = Integer.parseInt(lastId.substring(1)) + 1;
+                return "C" + String.format("%04d", newId); // C1001, C1002, etc.
+            } else {
+                return "C1001";
+            }
+        }
     }
 
     @Override
-    public List<course> findAll() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        List<course> courses = session.createQuery("FROM course", course.class).list();
-        session.close();
-        return courses;
+    public Course findById(String id) {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.get(Course.class, id);
+        }
+    }
+
+    @Override
+    public List<Course> findAll() {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            return session.createQuery("FROM Course", Course.class).list();
+        }
     }
 }

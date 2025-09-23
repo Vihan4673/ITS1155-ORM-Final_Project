@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import lk.ijse.db.FactoryConfiguration;
+import lk.ijse.config.FactoryConfiguration;
 
 public class Launcher extends Application {
 
@@ -20,7 +20,7 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) {
         Stage loadingStage = new Stage();
         try {
-            Parent loadingRoot = FXMLLoader.load(getClass().getResource("/LoadinScreen.fxml"));
+            Parent loadingRoot = FXMLLoader.load(getClass().getResource("/View/LoadinScreen.fxml"));
             Scene loadingScene = new Scene(loadingRoot);
             loadingScene.setFill(Color.TRANSPARENT);
 
@@ -50,7 +50,7 @@ public class Launcher extends Application {
             Task<Parent> loginLoadTask = new Task<>() {
                 @Override
                 protected Parent call() throws Exception {
-                    return FXMLLoader.load(getClass().getResource("/loginForm.fxml"));
+                    return FXMLLoader.load(getClass().getResource("/View/loginForm.fxml"));
                 }
             };
 

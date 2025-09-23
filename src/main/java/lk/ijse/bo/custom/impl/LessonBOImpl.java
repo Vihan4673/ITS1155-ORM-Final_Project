@@ -7,10 +7,10 @@ import lk.ijse.dao.custom.InstructorDAO;
 import lk.ijse.dao.custom.LessonDAO;
 import lk.ijse.dao.custom.StudentDAO;
 import lk.ijse.dto.LessonDTO;
-import lk.ijse.entity.Instructor;
 import lk.ijse.entity.Lesson;
 import lk.ijse.entity.Student;
-import lk.ijse.entity.course;
+import lk.ijse.entity.Course;
+import lk.ijse.entity.Instructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LessonBOImpl implements LessonBO {
-
 
     private final LessonDAO lessonDAO = (LessonDAO) DAOFactory.getDAO(DAOFactory.DAOType.LESSON);
     private final StudentDAO studentDAO = (StudentDAO) DAOFactory.getDAO(DAOFactory.DAOType.STUDENT);
@@ -32,56 +31,33 @@ public class LessonBOImpl implements LessonBO {
         if (lastId != null) {
             int id = Integer.parseInt(lastId.substring(1)) + 1;
             return String.format("L%03d", id);
-        } else {
-            return "L001";
         }
+        return "L001";
     }
 
     @Override
     public void saveLesson(LessonDTO dto) {
-        Lesson lesson = new Lesson();
-        lesson.setLessonId(dto.getLessonId());
-        lesson.setStudent(new Student(dto.getStudentId()));
-        lesson.setCourse(new course(dto.getCourseId()));
-        lesson.setInstructor(new Instructor(dto.getInstructorId()));
-        lesson.setLessonDate(Timestamp.valueOf(LocalDateTime.of(dto.getLessonDate(), LocalTime.parse(dto.getLessonTime()))));
-        lesson.setDuration(dto.getDuration());
-
-        lessonDAO.saveLesson(lesson);
+        lessonDAO.saveLesson(convertToEntity(dto));
     }
 
     @Override
     public void updateLesson(LessonDTO dto) {
-        Lesson lesson = new Lesson();
-        lesson.setLessonId(dto.getLessonId());
-        lesson.setStudent(new Student(dto.getStudentId()));
-        lesson.setCourse(new course(dto.getCourseId()));
-        lesson.setInstructor(new Instructor(dto.getInstructorId()));
-        lesson.setLessonDate(Timestamp.valueOf(LocalDateTime.of(dto.getLessonDate(), LocalTime.parse(dto.getLessonTime()))));
-        lesson.setDuration(dto.getDuration());
-
-        lessonDAO.updateLesson(lesson);
+        lessonDAO.updateLesson(convertToEntity(dto));
     }
 
     @Override
     public void deleteLesson(LessonDTO dto) {
-        Lesson lesson = new Lesson();
-        lesson.setLessonId(dto.getLessonId());
-        lessonDAO.deleteLesson(lesson);
+        Lesson lesson = lessonDAO.getLesson(dto.getLessonId());
+        if (lesson != null) {
+            lessonDAO.deleteLesson(lesson);
+        }
     }
 
     @Override
     public LessonDTO getLesson(String lessonId) {
         Lesson lesson = lessonDAO.getLesson(lessonId);
-        return new LessonDTO(
-                lesson.getLessonId(),
-                lesson.getStudent().getStudentId(),
-                lesson.getCourse().getProgramId(),
-                lesson.getInstructor().getInstructorId(),
-                lesson.getLessonDate().toLocalDateTime().toLocalDate(),
-                lesson.getLessonDate().toLocalDateTime().toLocalTime().toString(),
-                lesson.getDuration()
-        );
+        if (lesson == null) return null;
+        return convertToDTO(lesson);
     }
 
     @Override
@@ -89,16 +65,46 @@ public class LessonBOImpl implements LessonBO {
         List<Lesson> all = lessonDAO.getAllLesson();
         List<LessonDTO> dtos = new ArrayList<>();
         for (Lesson lesson : all) {
-            dtos.add(new LessonDTO(
-                    lesson.getLessonId(),
-                    lesson.getStudent().getStudentId(),
-                    lesson.getCourse().getProgramId(),
-                    lesson.getInstructor().getInstructorId(),
-                    lesson.getLessonDate().toLocalDateTime().toLocalDate(),
-                    lesson.getLessonDate().toLocalDateTime().toLocalTime().toString(),
-                    lesson.getDuration()
-            ));
+            dtos.add(convertToDTO(lesson));
         }
         return dtos;
     }
+
+    // --- Helper Methods ---
+    // LessonDTO ➜ Lesson entity
+    private Lesson convertToEntity(LessonDTO dto) {
+        Lesson lesson = new Lesson();
+        lesson.setLessonId(dto.getLessonId());
+
+        Student student = studentDAO.findById(dto.getStudentId());
+        Course course = courseDAO.findById(dto.getCourseId());
+        Instructor instructor = instructorDAO.findById(dto.getInstructorId());
+
+        lesson.setStudent(student);
+        lesson.setCourse(course);
+        lesson.setInstructor(instructor);
+
+        // Convert LocalDate + String Time to Timestamp
+        LocalDateTime dateTime = LocalDateTime.of(dto.getLessonDate(), LocalTime.parse(dto.getLessonTime()));
+        lesson.setLessonDate(Timestamp.valueOf(dateTime).toLocalDateTime()); // ok
+
+        lesson.setDuration(dto.getDuration());
+        return lesson;
+    }
+
+    // Lesson entity ➜ LessonDTO
+    private LessonDTO convertToDTO(Lesson lesson) {
+        Timestamp ts = Timestamp.valueOf(lesson.getLessonDate());
+        LocalDateTime dateTime = ts.toLocalDateTime(); // fix: convert Timestamp ➜ LocalDateTime
+        return new LessonDTO(
+                lesson.getLessonId(),
+                lesson.getStudent().getStudentId(),
+                lesson.getCourse().getProgramId(),
+                lesson.getInstructor().getInstructorId(),
+                dateTime.toLocalDate(),
+                dateTime.toLocalTime().toString(),
+                lesson.getDuration()
+        );
+    }
+
 }

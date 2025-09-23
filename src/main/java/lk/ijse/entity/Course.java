@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class course {
+public class Course {
 
     @Id
     @Column(length = 10)
@@ -22,7 +22,7 @@ public class course {
     private String programName;
 
     @Column(nullable = false)
-    private int duration;
+    private int duration; // stored in months
 
     @Column(nullable = false)
     private double fee;
@@ -37,22 +37,19 @@ public class course {
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
-
-    public course(String programId, String programName, int duration, double fee) {
+    // Custom constructor for convenience (without relationships)
+    public Course(String programId, String programName, int duration, double fee) {
         this.programId = programId;
         this.programName = programName;
         this.duration = duration;
         this.fee = fee;
     }
 
-
-    public course(String programId) {
+    // Constructor with only ID, defaults others
+    public Course(String programId) {
         this.programId = programId;
         this.programName = "";
         this.duration = 0;
         this.fee = 0.0;
-        this.students = new ArrayList<>();
-        this.lessons = new ArrayList<>();
-        this.instructor = null;
     }
 }

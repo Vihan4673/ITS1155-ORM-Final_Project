@@ -19,7 +19,7 @@
       <children>
          <ImageView fitHeight="539.0" fitWidth="400.0" layoutX="0.0" layoutY="0.0" opacity="0.02" preserveRatio="false" style="-fx-opacity: 0.7;">
             <image>
-               <Image url="@asset/Gemini_Generated_Image_a8qvk4a8qvk4a8qv.png" />
+               <Image url="@../asset/Gemini_Generated_Image_a8qvk4a8qvk4a8qv.png" />
             </image>
          </ImageView>
          <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="539.0" prefWidth="400.0" spacing="10">

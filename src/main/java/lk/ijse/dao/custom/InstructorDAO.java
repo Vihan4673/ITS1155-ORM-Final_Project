@@ -11,7 +11,7 @@ public interface InstructorDAO extends SuperDAO {
     boolean delete(String id);
     Instructor search(String id);
     List<Instructor> getAll();
-
+    Instructor findById(String id);
     String generateNewId();
     int count();
 }

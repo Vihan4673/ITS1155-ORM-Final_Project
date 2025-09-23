@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.SettingBO;
 import lk.ijse.dto.UserDTO;
@@ -18,75 +17,75 @@ import java.util.Optional;
 
 public class SettingFormController {
 
-    @FXML
-    private TableColumn<UserTm, String> colUserName;
+    @FXML private TableColumn<UserTm, String> colUserName;
+    @FXML private TableColumn<UserTm, String> colUserRole;
+    @FXML private TableColumn<UserTm, Button> colDelete;
+    @FXML private TableView<UserTm> tblUser;
 
-    @FXML
-    private TableColumn<UserTm, String> colUserRole;
+    @FXML private AnchorPane settingForm;
+    @FXML private TextField txtUserName;
+    @FXML private PasswordField txtPassword;
+    @FXML private PasswordField txtNewPassword;
+    @FXML private PasswordField txtConfirmPassword;
 
-    @FXML
-    private TableColumn<UserTm, Button> colDelete;
-
-    @FXML
-    private AnchorPane settingForm;
-
-    @FXML
-    private TableView<UserTm> tblUser;
-
-    @FXML
-    private PasswordField txtConfirmPassword;
-
-    @FXML
-    private PasswordField txtNewPassword;
-
-    @FXML
-    private PasswordField txtPassword;
-
-    @FXML
-    private TextField txtUserName;
-
-    @FXML
-    private Pane visiblePane;
+    @FXML private AnchorPane visiblePane; // Admin-only pane
 
     private final SettingBO settingBO = (SettingBO) BOFactory.getBO(BOFactory.BOType.SETTING);
     private List<UserDTO> allUsers;
 
     public void initialize() {
+        // Hide new password fields initially
         txtNewPassword.setVisible(false);
         txtConfirmPassword.setVisible(false);
         txtNewPassword.setDisable(true);
         txtConfirmPassword.setDisable(true);
 
+        // Load current user's username
         txtUserName.setText(LoginFormController.userDTO.getUserName());
 
-        // Hide user management pane if not admin
-        if (!"Admin".equals(LoginFormController.userDTO.getRole())) {
+        // Show admin pane only for Admin
+        if (!"Admin".equalsIgnoreCase(LoginFormController.userDTO.getRole())) {
             visiblePane.setVisible(false);
         }
 
         setCellValueFactory();
         loadAllUsers();
+
+        // Press Enter on current password to enable new password fields
+        txtPassword.setOnAction(this::txtPasswordOnAction);
     }
 
     private void setCellValueFactory() {
         colUserName.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("userName"));
-        colUserRole.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("role"));
+        colUserRole.setCellValueFactory(param -> {
+            String role = param.getValue().getRole();
+            if ("AdmissionCoordinator".equalsIgnoreCase(role)) {
+                role = "Receptionist";
+            }
+            return new javafx.beans.property.SimpleStringProperty(role);
+        });
         colDelete.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("delete"));
     }
 
     private void loadAllUsers() {
+        if (!"Admin".equalsIgnoreCase(LoginFormController.userDTO.getRole())) return;
+
         ObservableList<UserTm> userTms = FXCollections.observableArrayList();
         allUsers = settingBO.getAllUsers();
 
         for (UserDTO userDTO : allUsers) {
-            userTms.add(new UserTm(userDTO.getUserName(), userDTO.getRole(), createButton(userDTO)));
+            userTms.add(new UserTm(
+                    userDTO.getUserName(),
+                    userDTO.getRole(),
+                    createDeleteButton(userDTO)
+            ));
         }
         tblUser.setItems(userTms);
     }
 
-    private Button createButton(UserDTO userDTO) {
+    private Button createDeleteButton(UserDTO userDTO) {
         Button button = new Button("Delete");
-        button.setStyle("-fx-background-color: red;-fx-text-fill: white; -fx-cursor: hand;");
+        button.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-cursor: hand;");
 
         button.setOnAction(e -> {
             ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -124,10 +123,10 @@ public class SettingFormController {
 
         String hashedPassword = LoginFormController.userDTO.getPassword();
 
-        // If password change is requested
+        // Password change requested
         if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
             if (currentPassword.isEmpty()) {
-                new Alert(Alert.AlertType.WARNING, "Please enter your current password first!").show();
+                new Alert(Alert.AlertType.WARNING, "Please enter current password first!").show();
                 return;
             }
 
@@ -153,12 +152,13 @@ public class SettingFormController {
             );
             settingBO.updateUser(userDTO);
 
-            // Update static user data
+            // Update logged-in user
             LoginFormController.userDTO.setUserName(newUserName);
             LoginFormController.userDTO.setPassword(hashedPassword);
 
             loadAllUsers();
 
+            // Reset fields
             txtPassword.clear();
             txtNewPassword.clear();
             txtConfirmPassword.clear();

@@ -1,7 +1,7 @@
 package lk.ijse.dao.custom.impl;
 
 import lk.ijse.dao.custom.QueryDAO;
-import lk.ijse.db.FactoryConfiguration;
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.entity.Student;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,7 +19,7 @@ public class QueryDAOImpl implements QueryDAO {
         Transaction transaction = session.beginTransaction();
 
         // First, get the total number of culinary programs
-        String countProgramsHql = "SELECT COUNT(DISTINCT p.programId) FROM course p";
+        String countProgramsHql = "SELECT COUNT(DISTINCT p.programId) FROM Course p";
         Query<Long> countQuery = session.createQuery(countProgramsHql, Long.class);
         Long totalPrograms = countQuery.uniqueResult();
 

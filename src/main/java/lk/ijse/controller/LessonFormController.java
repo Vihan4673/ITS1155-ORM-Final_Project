@@ -13,10 +13,7 @@ import lk.ijse.bo.custom.CourseBO;
 import lk.ijse.bo.custom.InstructorBO;
 import lk.ijse.bo.custom.LessonBO;
 import lk.ijse.bo.custom.StudentBO;
-import lk.ijse.dto.InstructorDTO;
-import lk.ijse.dto.LessonDTO;
-import lk.ijse.dto.StudentDTO;
-import lk.ijse.dto.courseDTO;
+import lk.ijse.dto.*;
 import lk.ijse.tdm.LessonTm;
 
 import java.time.LocalDate;
@@ -24,51 +21,44 @@ import java.util.List;
 
 public class LessonFormController {
 
-    public TextField txtSearch;
-    @FXML
-    private TableView<LessonTm> tblLesson;
-    @FXML
-    private TableColumn<LessonTm, String> colLessonId;
-    @FXML
-    private TableColumn<LessonTm, String> colStudent;
-    @FXML
-    private TableColumn<LessonTm, String> colCourse;
-    @FXML
-    private TableColumn<LessonTm, String> colInstructor;
-    @FXML
-    private TableColumn<LessonTm, LocalDate> colDate;
-    @FXML
-    private TableColumn<LessonTm, String> colTime;
-    @FXML
-    private TableColumn<LessonTm, Integer> colDuration;
+    @FXML private TextField txtSearch;
+    @FXML private TableView<LessonTm> tblLesson;
+    @FXML private TableColumn<LessonTm, String> colLessonId;
+    @FXML private TableColumn<LessonTm, String> colStudent;
+    @FXML private TableColumn<LessonTm, String> colCourse;
+    @FXML private TableColumn<LessonTm, String> colInstructor;
+    @FXML private TableColumn<LessonTm, LocalDate> colDate;
+    @FXML private TableColumn<LessonTm, String> colTime;
+    @FXML private TableColumn<LessonTm, Integer> colDuration;
 
-    @FXML
-    private TextField txtLessonId;
-    @FXML
-    private DatePicker dateLesson;
-    @FXML
-    private ComboBox<String> cmbStudent;
-    @FXML
-    private ComboBox<String> cmbCourse;
-    @FXML
-    private ComboBox<String> cmbInstructor;
-    @FXML
-    private TextField txtTime;
-    @FXML
-    private TextField txtDuration;
+    @FXML private TextField txtLessonId;
+    @FXML private DatePicker dateLesson;
+    @FXML private ComboBox<String> cmbStudent;
+    @FXML private ComboBox<String> cmbCourse;
+    @FXML private ComboBox<String> cmbInstructor;
+    @FXML private TextField txtDuration;
+    @FXML private Spinner<Integer> spinnerHour;
+    @FXML private Spinner<Integer> spinnerMinute;
 
-    LessonBO lessonBO = (LessonBO) BOFactory.getBO(BOFactory.BOType.LESSON);
-    StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
-    CourseBO courseBO = (CourseBO) BOFactory.getBO(BOFactory.BOType.COURSE);
-    InstructorBO instructorBO = (InstructorBO) BOFactory.getBO(BOFactory.BOType.INSTRUCTOR);
+    private final LessonBO lessonBO = (LessonBO) BOFactory.getBO(BOFactory.BOType.LESSON);
+    private final StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
+    private final CourseBO courseBO = (CourseBO) BOFactory.getBO(BOFactory.BOType.COURSE);
+    private final InstructorBO instructorBO = (InstructorBO) BOFactory.getBO(BOFactory.BOType.INSTRUCTOR);
 
     public void initialize() {
-        // Auto-generate Lesson ID
         txtLessonId.setText(lessonBO.generateNextLessonId());
-
         setCellValueFactory();
-        loadAllLesson();
+        loadAllLessons();
         loadComboBoxes();
+        initializeSpinners();
+    }
+
+    private void initializeSpinners() {
+        spinnerHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 9));
+        spinnerHour.setEditable(true);
+
+        spinnerMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        spinnerMinute.setEditable(true);
     }
 
     private void setCellValueFactory() {
@@ -81,10 +71,10 @@ public class LessonFormController {
         colDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
     }
 
-    private void loadAllLesson() {
-        List<LessonDTO> allLesson = lessonBO.getAllLesson();
+    private void loadAllLessons() {
+        List<LessonDTO> allLessons = lessonBO.getAllLesson();
         ObservableList<LessonTm> lessonTms = FXCollections.observableArrayList();
-        for (LessonDTO dto : allLesson) {
+        for (LessonDTO dto : allLessons) {
             lessonTms.add(new LessonTm(
                     dto.getLessonId(),
                     dto.getStudentId(),
@@ -99,23 +89,28 @@ public class LessonFormController {
     }
 
     private void loadComboBoxes() {
+        cmbStudent.getItems().clear();
+        cmbCourse.getItems().clear();
+        cmbInstructor.getItems().clear();
+
         List<StudentDTO> students = studentBO.getAllStudent();
-        List<courseDTO> courses = courseBO.getAllCulinaryProgram();
+        List<CourseDTO> courses = courseBO.getAllCourses();
         List<InstructorDTO> instructors = instructorBO.getAllInstructors();
 
-        for (StudentDTO s : students) cmbStudent.getItems().add(s.getStudentId());
-        for (courseDTO c : courses) cmbCourse.getItems().add(c.getProgramId());
-        for (InstructorDTO i : instructors) cmbInstructor.getItems().add(i.getInstructorId());
+        students.forEach(s -> cmbStudent.getItems().add(s.getStudentId()));
+        courses.forEach(c -> cmbCourse.getItems().add(c.getProgramId()));
+        instructors.forEach(i -> cmbInstructor.getItems().add(i.getInstructorId()));
     }
 
-    private LessonDTO getObject() {
+    private LessonDTO getLessonFromFields() {
+        String lessonTime = String.format("%02d:%02d:00", spinnerHour.getValue(), spinnerMinute.getValue());
         return new LessonDTO(
                 txtLessonId.getText(),
                 cmbStudent.getValue(),
                 cmbCourse.getValue(),
                 cmbInstructor.getValue(),
                 dateLesson.getValue(),
-                txtTime.getText(),
+                lessonTime,
                 Integer.parseInt(txtDuration.getText())
         );
     }
@@ -131,29 +126,30 @@ public class LessonFormController {
         cmbStudent.getSelectionModel().clearSelection();
         cmbCourse.getSelectionModel().clearSelection();
         cmbInstructor.getSelectionModel().clearSelection();
-        txtTime.clear();
+        spinnerHour.getValueFactory().setValue(9);
+        spinnerMinute.getValueFactory().setValue(0);
         txtDuration.clear();
     }
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        lessonBO.deleteLesson(getObject());
+        lessonBO.deleteLesson(getLessonFromFields());
         clearData();
-        loadAllLesson();
+        loadAllLessons();
     }
 
     @FXML
     void btnSaveOnAction(ActionEvent event) {
-        lessonBO.saveLesson(getObject());
+        lessonBO.saveLesson(getLessonFromFields());
         clearData();
-        loadAllLesson();
+        loadAllLessons();
     }
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
-        lessonBO.updateLesson(getObject());
+        lessonBO.updateLesson(getLessonFromFields());
         clearData();
-        loadAllLesson();
+        loadAllLessons();
     }
 
     @FXML
@@ -165,20 +161,22 @@ public class LessonFormController {
             cmbStudent.setValue(selected.getStudentId());
             cmbCourse.setValue(selected.getCourseId());
             cmbInstructor.setValue(selected.getInstructorId());
-            txtTime.setText(selected.getLessonTime());
+
+            String[] timeParts = selected.getLessonTime().split(":");
+            spinnerHour.getValueFactory().setValue(Integer.parseInt(timeParts[0]));
+            spinnerMinute.getValueFactory().setValue(Integer.parseInt(timeParts[1]));
+
             txtDuration.setText(String.valueOf(selected.getDuration()));
         }
     }
 
     @FXML
-    public void txtSearchKeyReleased(KeyEvent keyEvent) {
+    public void txtSearchKeyReleased(KeyEvent event) {
         String searchText = txtSearch.getText().toLowerCase();
-
-
-        List<LessonDTO> allLesson = lessonBO.getAllLesson();
+        List<LessonDTO> allLessons = lessonBO.getAllLesson();
         ObservableList<LessonTm> filteredList = FXCollections.observableArrayList();
 
-        for (LessonDTO dto : allLesson) {
+        for (LessonDTO dto : allLessons) {
             if (dto.getLessonId().toLowerCase().contains(searchText) ||
                     dto.getStudentId().toLowerCase().contains(searchText) ||
                     dto.getCourseId().toLowerCase().contains(searchText) ||
@@ -198,5 +196,4 @@ public class LessonFormController {
 
         tblLesson.setItems(filteredList);
     }
-
 }

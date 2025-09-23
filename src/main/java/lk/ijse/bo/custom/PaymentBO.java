@@ -4,7 +4,7 @@ package lk.ijse.bo.custom;
 import lk.ijse.bo.SuperBO;
 import lk.ijse.dto.PaymentDTO;
 import lk.ijse.dto.StudentDTO;
-import lk.ijse.dto.courseDTO;
+import lk.ijse.dto.CourseDTO;
 
 import java.util.List;
 
@@ -18,6 +18,6 @@ public interface PaymentBO extends SuperBO {
 
     // Add for loading ComboBoxes
     List<StudentDTO> getAllStudents();
-    List<courseDTO> getAllPrograms();
+    List<CourseDTO> getAllPrograms();
     boolean updateStatus(String paymentId, String newStatus) throws Exception;
 }

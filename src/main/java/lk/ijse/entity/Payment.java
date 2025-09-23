@@ -1,10 +1,7 @@
 package lk.ijse.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.sql.Date;
 
 @Entity
@@ -28,11 +25,11 @@ public class Payment {
     private Date paymentDate;
 
     @Column(nullable = false)
-    private String status;
+    private String status; // COMPLETED, PENDING, FAILEDD
 
 
 
     @ManyToOne
     @JoinColumn(name = "programId")
-    private course program;
+    private Course program;
 }

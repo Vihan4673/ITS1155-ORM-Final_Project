@@ -4,10 +4,9 @@ import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -39,13 +38,19 @@ public class DashboardController {
     @FXML
     private AnchorPane dashboardFrom;
 
+    @FXML
+    private Label lblUserName;
+
+    @FXML
+    private Label lblUserRole;
+
+    // Initialize method
     public void initialize() {
         try {
             // Load default dashboard
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Home.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Home.fxml"));
             AnchorPane pane = loader.load();
             changeForm.getChildren().setAll(pane);
-
 
             // Add hover effects ONLY to buttons that exist in FXML
             addHoverEffect(btnDashboard);
@@ -60,6 +65,7 @@ public class DashboardController {
         }
     }
 
+    // Hover effect helper
     private void addHoverEffect(JFXButton button) {
         DropShadow shadow = new DropShadow();
         shadow.setRadius(10);
@@ -77,42 +83,46 @@ public class DashboardController {
         });
     }
 
+    // Load forms
     @FXML
     void btnDashboardOnAction(ActionEvent event) {
-        loadForm("/Home.fxml", btnDashboard);
+        loadForm("/View/Home.fxml", btnDashboard);
     }
 
     @FXML
     void btnProgramOnAction(ActionEvent event) {
-        loadForm("/programForm.fxml", btnProgram);
+        loadForm("/View/CourseForm.fxml", btnProgram);
     }
 
     @FXML
     void btnStudentOnAction(ActionEvent event) {
-        loadForm("/studentForm.fxml", btnStudent);
+        loadForm("/View/studentForm.fxml", btnStudent);
     }
 
     @FXML
     void btnInstructorOnAction(ActionEvent event) {
-        loadForm("/instructorForm.fxml", btnInstructor);
+        loadForm("/View/instructorForm.fxml", btnInstructor);
     }
 
     @FXML
     void btnPaymentOnAction(ActionEvent event) {
-        loadForm("/paymentTableForm.fxml", btnPayment);
+        loadForm("/View/paymentTableForm.fxml", btnPayment);
     }
 
     @FXML
     void btnLessonsOnAction(ActionEvent event) {
-        loadForm("/lessonForm.fxml", btnLessons);
+        loadForm("/View/lessonForm.fxml", btnLessons);
     }
+
     @FXML
-    void btSettingsOnAction(ActionEvent event)  {loadForm("/settingForm.fxml", btnLessons);}
+    void btSettingsOnAction(ActionEvent event)  {
+        loadForm("/View/settingForm.fxml", btnLessons);
+    }
 
     @FXML
     void logOutAction(ActionEvent event) {
         try {
-            Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource("/loginForm.fxml")));
+            Scene scene = new Scene(FXMLLoader.load(this.getClass().getResource("/View/loginForm.fxml")));
             Stage stage = (Stage) dashboardFrom.getScene().getWindow();
             stage.setScene(scene);
             stage.centerOnScreen();
@@ -122,24 +132,21 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Utility method to load forms & highlight active button
-     */
+    // Utility method to load forms & highlight active button
     private void loadForm(String fxmlPath, JFXButton activeButton) {
         try {
-            // Use FXMLLoader instance to load the FXML safely
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            AnchorPane pane = loader.load(); // load returns a Node
-            changeForm.getChildren().setAll(pane); // set the loaded pane
-
+            AnchorPane pane = loader.load();
+            changeForm.getChildren().setAll(pane);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to load FXML: " + fxmlPath);
-        } catch (NullPointerException e) {
-            System.out.println("FXML file not found or 'changeForm' is null!");
-            e.printStackTrace();
         }
     }
 
-
+    // NEW: Method to set user info
+    public void setUserInfo(String userName, String role) {
+        lblUserName.setText(userName);
+        lblUserRole.setText(role);
+    }
 }

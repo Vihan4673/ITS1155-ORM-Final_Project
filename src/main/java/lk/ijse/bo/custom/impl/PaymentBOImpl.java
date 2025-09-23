@@ -7,10 +7,10 @@ import lk.ijse.dao.custom.PaymentDAO;
 import lk.ijse.dao.custom.StudentDAO;
 import lk.ijse.dto.PaymentDTO;
 import lk.ijse.dto.StudentDTO;
-import lk.ijse.dto.courseDTO;
+import lk.ijse.dto.CourseDTO;
 import lk.ijse.entity.Payment;
 import lk.ijse.entity.Student;
-import lk.ijse.entity.course;
+import lk.ijse.entity.Course;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,16 +62,23 @@ public class PaymentBOImpl implements PaymentBO {
 
     // Load all programs
     @Override
-    public List<courseDTO> getAllPrograms() {
+    public List<CourseDTO> getAllPrograms() {
         return programDAO.findAll().stream()
-                .map(p -> new courseDTO(p.getProgramId(), p.getProgramName(), p.getDuration(), p.getFee()))
+                .map(p -> new CourseDTO(
+                        p.getProgramId(),
+                        p.getProgramName(),
+                        p.getDuration(),
+                        p.getFee(),
+                        "Months" // default value, හෝ p.getDurationUnit() use කරන්න
+                ))
                 .collect(Collectors.toList());
     }
 
 
+
     private Payment toEntity(PaymentDTO dto) {
         Student student = new Student(dto.getStudentId());
-        course program = new course(dto.getProgramId());
+        Course program = new Course(dto.getProgramId());
 
         java.sql.Date paymentDate = java.sql.Date.valueOf(dto.getPaymentDate());
 

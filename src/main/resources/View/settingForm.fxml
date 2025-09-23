@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -23,7 +24,7 @@
          <children>
             <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@asset/icon/cogwheel.png"/>
+                  <Image url="@../asset/icon/cogwheel.png"/>
                </image>
             </ImageView>
             <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Settings"/>
@@ -53,19 +54,19 @@
                   <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <children>
                         <Label style="-fx-font-weight: bold; -fx-min-width: 130px;" text="Password :"/>
-                        <TextField fx:id="txtPassword" HBox.hgrow="ALWAYS" />
+                        <PasswordField fx:id="txtPassword" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                      <children>
                         <Label style="-fx-font-weight: bold; -fx-min-width: 130px;" text="New Password :"/>
-                        <TextField fx:id="txtNewPassword" HBox.hgrow="ALWAYS" />
+                        <PasswordField fx:id="txtNewPassword" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Label style="-fx-font-weight: bold; -fx-min-width: 130px;" text="Confirm Password :"/>
-                        <TextField fx:id="txtConfirmPassword" HBox.hgrow="ALWAYS" />
+                        <PasswordField fx:id="txtConfirmPassword" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>

@@ -17,12 +17,12 @@ public class Student {
 
     @Id
     private String studentId;
-
     private String name;
     private String address;
     private Long tel;
     private Date registrationDate;
     private int someInt;
+
 
     @ManyToMany
     @JoinTable(
@@ -30,7 +30,7 @@ public class Student {
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private List<course> courses = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();
@@ -50,6 +50,7 @@ public class Student {
         this.lessons = new ArrayList<>();
         this.payments = new ArrayList<>();
     }
+
 
     public Student(String studentId) {
         this.studentId = studentId;

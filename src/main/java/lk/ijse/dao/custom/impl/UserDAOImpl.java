@@ -1,7 +1,8 @@
 package lk.ijse.dao.custom.impl;
 
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.dao.custom.UserDAO;
-import lk.ijse.db.FactoryConfiguration;
+
 import lk.ijse.entity.User;
 import lk.ijse.exception.UserAlreadyExistsException;
 import org.hibernate.Session;

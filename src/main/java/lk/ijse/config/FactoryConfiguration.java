@@ -1,4 +1,4 @@
-package lk.ijse.db;
+package lk.ijse.config;
 
 import lk.ijse.entity.*;
 import org.hibernate.Session;
@@ -25,7 +25,7 @@ public class FactoryConfiguration {
             Configuration configuration = new Configuration();
             configuration.setProperties(properties)
                     .addAnnotatedClass(User.class)
-                    .addAnnotatedClass(course.class)
+                    .addAnnotatedClass(Course.class)
                     .addAnnotatedClass(Instructor.class)
                     .addAnnotatedClass(Lesson.class)
                     .addAnnotatedClass(Payment.class)

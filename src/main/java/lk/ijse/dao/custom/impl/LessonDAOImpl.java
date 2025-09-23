@@ -1,7 +1,7 @@
 package lk.ijse.dao.custom.impl;
 
 import lk.ijse.dao.custom.LessonDAO;
-import lk.ijse.db.FactoryConfiguration;
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.entity.Lesson;
 import org.hibernate.Session;
 import org.hibernate.Transaction;

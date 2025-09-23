@@ -76,9 +76,9 @@ public class SignUpFormController {
     }
 
     @FXML
-    void backToLoginOnAction(javafx.scene.input.MouseEvent event) {
+    void backToLoginOnAction(ActionEvent event) {
         try {
-            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/loginForm.fxml")));
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/view/loginForm.fxml")));
             Stage stage = (Stage) signUpForm.getScene().getWindow();
             stage.setScene(scene);
             stage.centerOnScreen();

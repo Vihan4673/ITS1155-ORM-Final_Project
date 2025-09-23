@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="lessonForm" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f9;"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="lk.ijse.controller.LessonFormController">
+
+    <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 20px 30px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-background-radius: 15; -fx-spacing: 15px;">
+            <children>
+                <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../asset/icon/lesson.png"/>
+                    </image>
+                </ImageView>
+                <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;"
+                       text="Lesson Management"/>
+                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                    <children>
+                        <TextField fx:id="txtSearch" onKeyReleased="#txtSearchKeyReleased" prefHeight="36.0" prefWidth="250.0"
+                                   promptText="Search by ID"
+                                   style="-fx-background-color: #f0f2f5; -fx-background-radius: 8px; -fx-padding: 8px 15px; -fx-font-size: 14px;"/>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true" HBox.hgrow="NEVER">
+                            <image>
+                                <Image url="@asset/icon/search.png"/>
+                            </image>
+                            <HBox.margin>
+                                <Insets left="-40.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+
+        <!-- Form and Table -->
+        <VBox prefHeight="591.0" prefWidth="946.0" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 20px; -fx-spacing: 25px; -fx-padding: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+
+            <!-- GridPane Form -->
+            <GridPane hgap="30.0" vgap="20.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="400.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="400.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <children>
+                    <!-- Lesson ID -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Lesson ID :"/>
+                            <TextField fx:id="txtLessonId" editable="false" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+
+                    <!-- Lesson Date -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Lesson Date :"/>
+                            <DatePicker fx:id="dateLesson" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+
+                    <!-- Student -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Student :"/>
+                            <ComboBox fx:id="cmbStudent" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+
+                    <!-- Course -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Course :"/>
+                            <ComboBox fx:id="cmbCourse" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+
+                    <!-- Instructor -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Instructor :"/>
+                            <ComboBox fx:id="cmbInstructor" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+
+                    <!-- Time -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Time :"/>
+                            <Spinner fx:id="spinnerHour" prefWidth="80.0" />
+                            <Label text=":" style="-fx-font-weight: bold;" />
+                            <Spinner fx:id="spinnerMinute" prefWidth="80.0" />
+                        </children>
+                    </HBox>
+
+                    <!-- Duration -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-min-width: 100px;" text="Duration :"/>
+                            <TextField fx:id="txtDuration" promptText="Minutes (e.g. 90)" HBox.hgrow="ALWAYS" />
+                        </children>
+                    </HBox>
+                </children>
+            </GridPane>
+
+            <!-- Buttons -->
+            <HBox alignment="CENTER" spacing="15.0">
+                <children>
+                    <JFXButton onAction="#btnSaveOnAction" prefHeight="40.0" prefWidth="120.0"
+                               style="-fx-background-color: #27ae60; -fx-background-radius: 8px;"
+                               text="💾 Save" textFill="WHITE">
+                        <font>
+                            <Font name="DejaVu Serif Bold" size="16.0"/>
+                        </font>
+                    </JFXButton>
+                    <JFXButton onAction="#btnUpdateOnAction" prefHeight="40.0" prefWidth="120.0"
+                               style="-fx-background-color: #f39c12; -fx-background-radius: 8px;"
+                               text="✏️ Update" textFill="#263238">
+                        <font>
+                            <Font name="DejaVu Serif Bold" size="16.0"/>
+                        </font>
+                    </JFXButton>
+                    <JFXButton onAction="#btnClearOnAction" prefHeight="40.0" prefWidth="120.0"
+                               style="-fx-background-color: #bdc3c7; -fx-background-radius: 8px;"
+                               text="🧹 Clear" textFill="#263238">
+                        <font>
+                            <Font name="DejaVu Serif Bold" size="16.0"/>
+                        </font>
+                    </JFXButton>
+                    <JFXButton onAction="#btnDeleteOnAction" prefHeight="40.0" prefWidth="120.0"
+                               style="-fx-background-color: #c0392b; -fx-background-radius: 8px;"
+                               text="🗑️ Delete" textFill="WHITE">
+                        <font>
+                            <Font name="DejaVu Serif Bold" size="16.0"/>
+                        </font>
+                    </JFXButton>
+                </children>
+            </HBox>
+
+            <!-- Table -->
+            <TableView fx:id="tblLesson" onMouseClicked="#tblLessonOnClickAction" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colLessonId" text="Lesson ID" prefWidth="100.0"/>
+                    <TableColumn fx:id="colStudent" text="Student" prefWidth="120.0"/>
+                    <TableColumn fx:id="colCourse" text="Course" prefWidth="120.0"/>
+                    <TableColumn fx:id="colInstructor" text="Instructor" prefWidth="120.0"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="100.0"/>
+                    <TableColumn fx:id="colTime" text="Time" prefWidth="80.0"/>
+                    <TableColumn fx:id="colDuration" text="Duration" prefWidth="100.0"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+    </VBox>
+</AnchorPane>

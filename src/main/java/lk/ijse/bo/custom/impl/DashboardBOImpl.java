@@ -22,7 +22,7 @@ public class DashboardBOImpl implements DashboardBO {
 
     @Override
     public Long getCulinaryProgramCount(){
-        return culinaryProgramDAO.getCulinaryProgramCount();
+        return culinaryProgramDAO.getCourseCount();
     }
 
     @Override

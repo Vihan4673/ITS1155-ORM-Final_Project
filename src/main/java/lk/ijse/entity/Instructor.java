@@ -1,10 +1,7 @@
 package lk.ijse.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class Instructor {
     private String specialization;
 
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
-    private List<course> courses = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<Lesson> lessons = new ArrayList<>();

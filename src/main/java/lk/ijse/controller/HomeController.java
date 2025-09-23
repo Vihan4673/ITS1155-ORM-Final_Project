@@ -14,7 +14,7 @@ import javafx.scene.layout.AnchorPane;
 
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.DashboardBO;
-import lk.ijse.db.FactoryConfiguration;
+import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.dto.StudentDTO;
 import lk.ijse.tdm.StudyAllStudentTm;
 import org.hibernate.Session;

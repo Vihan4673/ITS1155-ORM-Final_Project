@@ -11,7 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.ViewAllBO;
-import lk.ijse.dto.courseDTO;
+import lk.ijse.dto.CourseDTO;
 import lk.ijse.entity.Payment;
 import lk.ijse.entity.Student;
 import lk.ijse.tdm.ViewAllTm;
@@ -130,10 +130,10 @@ public class ViewAllFormController {
 //    }
 
     private void setChoiceBoxData(){
-        List<courseDTO> program = viewAllBO.getAllCulinaryProgram();
+        List<CourseDTO> program = viewAllBO.getAllCourses();
         ObservableList<String> programNames = FXCollections.observableArrayList();
 
-        for (courseDTO programDTO : program){
+        for (CourseDTO programDTO : program){
             programNames.add(programDTO.getProgramName());
         }
         selectPrgramChoiceBox.setItems(programNames);
