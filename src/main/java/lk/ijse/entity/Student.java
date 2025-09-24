@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +17,24 @@ import java.util.List;
 public class Student {
 
     @Id
+    @Column(name = "student_id", nullable = false, length = 10)
     private String studentId;
+
+
+    @Column(nullable = false)
     private String name;
+
     private String address;
     private Long tel;
+    private String email;
+
+    @Column(name = "registration_date")
     private Date registrationDate;
-    private int someInt;
 
+    @Column(nullable = false)
+    private int someInt = 0;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "student_course",
             joinColumns = @JoinColumn(name = "student_id"),
@@ -32,35 +42,24 @@ public class Student {
     )
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
 
-
-    public Student(String studentId, String name, String address, Long tel, Date registrationDate) {
-        this.studentId = studentId;
+    // Constructor without relations
+    public Student(String studentId, String name, String address, Long tel, String email, Date registrationDate) {
+        this.studentId = studentId; // ⚡ manual assign, e.g., "S1001"
         this.name = name;
         this.address = address;
         this.tel = tel;
+        this.email = email;
         this.registrationDate = registrationDate;
-        this.someInt = 0;
-        this.courses = new ArrayList<>();
-        this.lessons = new ArrayList<>();
-        this.payments = new ArrayList<>();
     }
 
-
+    // Constructor with only ID
     public Student(String studentId) {
         this.studentId = studentId;
-        this.name = "";
-        this.address = "";
-        this.tel = 0L;
-        this.registrationDate = new Date(System.currentTimeMillis());
-        this.someInt = 0;
-        this.courses = new ArrayList<>();
-        this.lessons = new ArrayList<>();
-        this.payments = new ArrayList<>();
     }
 }

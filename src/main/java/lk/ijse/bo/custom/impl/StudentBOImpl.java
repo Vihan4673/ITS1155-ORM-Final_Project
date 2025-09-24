@@ -5,9 +5,11 @@ import lk.ijse.dao.DAOFactory;
 import lk.ijse.dao.custom.StudentDAO;
 import lk.ijse.dto.StudentDTO;
 import lk.ijse.entity.Student;
+import lk.ijse.entity.Course;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StudentBOImpl implements StudentBO {
 
@@ -16,7 +18,13 @@ public class StudentBOImpl implements StudentBO {
     @Override
     public void saveStudent(StudentDTO dto) {
         if (dto == null) throw new IllegalArgumentException("StudentDTO cannot be null");
+
         try {
+            // Always generate ID if missing
+            if (dto.getStudentId() == null || dto.getStudentId().isEmpty()) {
+                dto.setStudentId(studentDAO.generateNewId());
+            }
+
             Student student = mapDtoToEntity(dto);
             studentDAO.saveStudent(student);
         } catch (Exception e) {
@@ -37,7 +45,9 @@ public class StudentBOImpl implements StudentBO {
 
     @Override
     public void deleteStudent(String studentId) {
-        if (studentId == null || studentId.isEmpty()) throw new IllegalArgumentException("Student ID cannot be null or empty");
+        if (studentId == null || studentId.isEmpty())
+            throw new IllegalArgumentException("Student ID cannot be null or empty");
+
         try {
             studentDAO.deleteStudent(studentId);
         } catch (Exception e) {
@@ -48,8 +58,9 @@ public class StudentBOImpl implements StudentBO {
     @Override
     public StudentDTO getStudent(String studentId) {
         if (studentId == null || studentId.isEmpty()) return null;
+
         Student student = studentDAO.getStudent(studentId);
-        return (student != null) ? mapEntityToDto(student) : null;
+        return mapEntityToDto(student);
     }
 
     @Override
@@ -65,30 +76,63 @@ public class StudentBOImpl implements StudentBO {
     @Override
     public String generateNewId() {
         try {
-            return studentDAO.generateNewId();
+            String lastId = studentDAO.generateNewId();
+            if (lastId == null || lastId.isEmpty()) return "S001";
+
+            int numeric = Integer.parseInt(lastId.replaceAll("\\D+", "")) + 1;
+            return String.format("S%03d", numeric);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate new ID: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to generate new student ID", e);
         }
     }
 
-    // Helper methods for mapping
+    // ---------------- Mapping ----------------
     private Student mapDtoToEntity(StudentDTO dto) {
-        return new Student(
-                dto.getStudentId(),
+        if (dto == null) return null;
+
+        String studentId = dto.getStudentId();
+        if (studentId == null || studentId.isEmpty()) {
+            studentId = generateNewId();
+            dto.setStudentId(studentId);
+        }
+
+        Student student = new Student(
+                studentId,
                 dto.getName(),
                 dto.getAddress(),
-                dto.getTel(),
+                dto.getTel() != null ? dto.getTel() : 0L,
+                dto.getEmail(),
                 dto.getRegistrationDate()
         );
+
+        if (dto.getEnrolledCourseIds() != null && !dto.getEnrolledCourseIds().isEmpty()) {
+            List<Course> courses = dto.getEnrolledCourseIds().stream()
+                    .map(Course::new) // only ID constructor
+                    .collect(Collectors.toList());
+            student.setCourses(courses);
+        }
+
+        return student;
     }
 
     private StudentDTO mapEntityToDto(Student entity) {
-        return new StudentDTO(
+        if (entity == null) return null;
+
+        StudentDTO dto = new StudentDTO(
                 entity.getStudentId(),
                 entity.getName(),
                 entity.getAddress(),
                 entity.getTel(),
+                entity.getEmail(),
                 entity.getRegistrationDate()
         );
+
+        List<Course> courses = entity.getCourses();
+        if (courses != null && !courses.isEmpty()) {
+            List<String> courseIds = courses.stream().map(Course::getProgramId).collect(Collectors.toList());
+            dto.setEnrolledCourseIds(courseIds);
+        }
+
+        return dto;
     }
 }

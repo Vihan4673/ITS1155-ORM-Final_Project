@@ -7,116 +7,132 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.PaymentBO;
+import lk.ijse.bo.custom.StudentBO;
+import lk.ijse.dto.CourseDTO;
 import lk.ijse.dto.PaymentDTO;
+import lk.ijse.dto.StudentDTO;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PaymentFormController {
 
     @FXML private TextField txtPaymentId;
-    @FXML private ComboBox<String> cmbStudent;
-    @FXML private ComboBox<String> cmbProgram;
-    @FXML private TextField txtAmount;
+    @FXML private TextField txtStudent;
+    @FXML private ListView<String> lstCourses;
+    @FXML private TextField txtTotalFee;
+    @FXML private TextField txtAdvance;
+    @FXML private TextField txtRemaining;
     @FXML private DatePicker dpPaymentDate;
-    @FXML private ComboBox<String> cmbStatus;
     @FXML private Button btnMakePayment;
     @FXML private Button btnCancel;
 
     private final PaymentBO paymentBO = (PaymentBO) BOFactory.getBO(BOFactory.BOType.PAYMENT);
+    private final StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
+
+    private double totalFee = 0.0;
 
     @FXML
     public void initialize() {
         generatePaymentId();
-        loadStatusOptions();
-        loadStudents();
-        loadPrograms();
+        txtAdvance.textProperty().addListener((obs, oldVal, newVal) -> updateRemaining());
     }
 
     private void generatePaymentId() {
-        txtPaymentId.setText(paymentBO.generatePaymentId());
+        try {
+            txtPaymentId.setText(paymentBO.generatePaymentId());
+        } catch (Exception e) {
+            txtPaymentId.setText("P1001"); // fallback ID
+        }
     }
 
-    private void loadStatusOptions() {
-        ObservableList<String> statusList = FXCollections.observableArrayList("COMPLETED", "PENDING", "FAILED");
-        cmbStatus.setItems(statusList);
+    /**
+     * Load student and their courses
+     */
+    public void loadStudentCourses(String studentId) {
+        try {
+            StudentDTO student = studentBO.getStudent(studentId);
+            if (student != null) {
+                txtStudent.setText(student.getStudentId() + " - " + student.getName());
+
+                // Load course names
+                List<String> courseNames = student.getEnrolledCourseIds().stream().collect(Collectors.toList());
+                lstCourses.setItems(FXCollections.observableArrayList(courseNames));
+
+                // Calculate total fee
+                totalFee = student.getEnrolledCourseIds().size() * 1000; // Example: each course fee = 1000
+                txtTotalFee.setText(String.valueOf(totalFee));
+
+                // Clear previous amounts
+                txtAdvance.clear();
+                txtRemaining.setText(String.valueOf(totalFee));
+            }
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Failed to load student data: " + e.getMessage()).show();
+            e.printStackTrace();
+        }
     }
 
-    private void loadStudents() {
-        ObservableList<String> studentList = FXCollections.observableArrayList();
-        paymentBO.getAllStudents().forEach(student -> studentList.add(student.getStudentId()));
-        cmbStudent.setItems(studentList);
-    }
-
-    private void loadPrograms() {
-        ObservableList<String> programList = FXCollections.observableArrayList();
-        paymentBO.getAllPrograms().forEach(program -> programList.add(program.getProgramId()));
-        cmbProgram.setItems(programList);
-    }
-
-    // 🔑 Allow StudentFormController to set StudentID directly
-    public void setStudentId(String studentId) {
-        cmbStudent.setValue(studentId);
-        cmbStudent.setDisable(true); // prevent user from changing
+    private void updateRemaining() {
+        try {
+            String advanceText = txtAdvance.getText();
+            double advance = advanceText.isEmpty() ? 0.0 : Double.parseDouble(advanceText);
+            double remaining = totalFee - advance;
+            txtRemaining.setText(String.valueOf(remaining));
+        } catch (NumberFormatException e) {
+            txtRemaining.setText(String.valueOf(totalFee));
+        }
     }
 
     @FXML
     private void btnMakePaymentOnAction() {
         try {
-            // Validate fields
-            if (cmbStudent.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Please select a Student!").show();
+            // Validations
+            if (txtStudent.getText().isEmpty()) {
+                new Alert(Alert.AlertType.WARNING, "Please select a student!").show();
                 return;
             }
-            if (cmbProgram.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Please select a Program!").show();
+            if (lstCourses.getItems().isEmpty()) {
+                new Alert(Alert.AlertType.WARNING, "No courses selected!").show();
                 return;
             }
             if (dpPaymentDate.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Please select a Payment Date!").show();
+                new Alert(Alert.AlertType.WARNING, "Please select a payment date!").show();
                 return;
             }
-            if (cmbStatus.getValue() == null) {
-                new Alert(Alert.AlertType.WARNING, "Please select a Status!").show();
-                return;
-            }
-
-            // Validate Amount
-            String amountText = txtAmount.getText();
-            if (amountText == null || amountText.trim().isEmpty()) {
-                new Alert(Alert.AlertType.WARNING, "Please enter the Amount!").show();
+            if (txtAdvance.getText().isEmpty()) {
+                new Alert(Alert.AlertType.WARNING, "Please enter the advance amount!").show();
                 return;
             }
 
-            double amount;
-            try {
-                amount = Double.parseDouble(amountText);
-                if (amount <= 0) {
-                    new Alert(Alert.AlertType.WARNING, "Amount must be greater than 0!").show();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                new Alert(Alert.AlertType.ERROR, "Amount must be a valid number!").show();
+            double advance = Double.parseDouble(txtAdvance.getText());
+            if (advance <= 0) {
+                new Alert(Alert.AlertType.WARNING, "Advance must be greater than 0!").show();
                 return;
             }
 
             // Create DTO
             PaymentDTO dto = new PaymentDTO(
                     txtPaymentId.getText(),
-                    cmbStudent.getValue(),
-                    cmbProgram.getValue(),
-                    amount,
+                    txtStudent.getText().split(" - ")[0], // extract studentId
+                    String.join(",", lstCourses.getItems()),
+                    advance,
                     dpPaymentDate.getValue().toString(),
-                    cmbStatus.getValue()
+                    txtRemaining.getText()
             );
 
             // Save
             if (paymentBO.savePayment(dto)) {
                 new Alert(Alert.AlertType.INFORMATION, "Payment Saved Successfully!").show();
-                closeForm(); // <-- close after success
+                closeForm();
             } else {
-                new Alert(Alert.AlertType.ERROR, "Failed to Save Payment!").show();
+                new Alert(Alert.AlertType.ERROR, "Failed to save payment!").show();
             }
 
+        } catch (NumberFormatException e) {
+            new Alert(Alert.AlertType.ERROR, "Invalid advance amount!").show();
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Unexpected Error: " + e.getMessage()).show();
+            new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
             e.printStackTrace();
         }
     }
@@ -129,5 +145,8 @@ public class PaymentFormController {
     private void closeForm() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
+    }
+
+    public void setStudentAndCourses(String studentId, List<CourseDTO> list) {
     }
 }

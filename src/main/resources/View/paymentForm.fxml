@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -23,6 +24,7 @@
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
         </padding>
 
+        <!-- Header -->
         <HBox alignment="CENTER_LEFT" style="-fx-padding: 20px 30px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2); -fx-alignment: center-left; -fx-spacing: 15px; -fx-background-radius: 15;">
             <children>
                 <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
@@ -34,6 +36,7 @@
             </children>
         </HBox>
 
+        <!-- Form -->
         <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: white; -fx-background-radius: 20px; -fx-padding: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
             <children>
                 <GridPane alignment="CENTER" hgap="30.0" vgap="20.0">
@@ -44,6 +47,7 @@
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -54,19 +58,22 @@
                         <TextField fx:id="txtPaymentId" GridPane.columnIndex="1" />
 
                         <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Student:" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtStudent" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="false" />
 
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Program:" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="cmbProgram" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Courses:" GridPane.rowIndex="2" />
+                        <ListView fx:id="lstCourses" GridPane.columnIndex="1" GridPane.rowIndex="2" prefHeight="100.0" />
 
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Amount:" GridPane.rowIndex="3" />
-                        <TextField fx:id="txtAmount" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Total Fee:" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtTotalFee" GridPane.columnIndex="1" GridPane.rowIndex="3" editable="false" />
 
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Payment Date:" GridPane.rowIndex="4" />
-                        <DatePicker fx:id="dpPaymentDate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Advance:" GridPane.rowIndex="4" />
+                        <TextField fx:id="txtAdvance" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Status:" GridPane.rowIndex="5" />
-                        <ComboBox fx:id="cmbStatus" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="cmbStudent" prefHeight="14.0" prefWidth="323.0" style="-fx-background-color: tranperant;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Remaining:" GridPane.rowIndex="5" />
+                        <TextField fx:id="txtRemaining" GridPane.columnIndex="1" GridPane.rowIndex="5" editable="false" />
+
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Payment Date:" GridPane.rowIndex="6" />
+                        <DatePicker fx:id="dpPaymentDate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                     </children>
                 </GridPane>
 

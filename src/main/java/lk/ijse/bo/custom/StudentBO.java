@@ -7,13 +7,21 @@ import java.util.List;
 
 public interface StudentBO extends SuperBO {
 
-    void saveStudent(StudentDTO dto);
-    void updateStudent(StudentDTO dto);
+    // Save a new student along with enrolled courses
+    void saveStudent(StudentDTO dto) throws Exception;
 
-    // Fix delete: only use studentId
-    void deleteStudent(String studentId);
+    // Update existing student info + enrolled courses
+    void updateStudent(StudentDTO dto) throws Exception;
 
-    StudentDTO getStudent(String studentId);
-    List<StudentDTO> getAllStudent();
-    String generateNewId();
+    // Delete student by ID
+    void deleteStudent(String studentId) throws Exception;
+
+    // Get single student by ID
+    StudentDTO getStudent(String studentId) throws Exception;
+
+    // Get all students
+    List<StudentDTO> getAllStudent() throws Exception;
+
+    // Auto-generate new student ID
+    String generateNewId() throws Exception;
 }

@@ -56,7 +56,26 @@ public class PaymentBOImpl implements PaymentBO {
     @Override
     public List<StudentDTO> getAllStudents() {
         return studentDAO.findAll().stream()
-                .map(s -> new StudentDTO(s.getStudentId(), s.getName(), s.getAddress(), s.getTel(), s.getRegistrationDate()))
+                .map(s -> {
+                    StudentDTO dto = new StudentDTO(
+                            s.getStudentId(),
+                            s.getName(),
+                            s.getAddress(),
+                            s.getTel(),
+                            s.getEmail() != null ? s.getEmail() : "",
+                            s.getRegistrationDate()
+                    );
+
+                    // Map enrolled courses
+                    if (s.getCourses() != null && !s.getCourses().isEmpty()) {
+                        List<String> courseIds = s.getCourses().stream()
+                                .map(Course::getProgramId)
+                                .collect(Collectors.toList());
+                        dto.setEnrolledCourseIds(courseIds);
+                    }
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -74,8 +93,6 @@ public class PaymentBOImpl implements PaymentBO {
                 .collect(Collectors.toList());
     }
 
-
-
     private Payment toEntity(PaymentDTO dto) {
         Student student = new Student(dto.getStudentId());
         Course program = new Course(dto.getProgramId());
@@ -92,8 +109,6 @@ public class PaymentBOImpl implements PaymentBO {
         );
     }
 
-
-
     private PaymentDTO toDTO(Payment entity) {
         return new PaymentDTO(
                 entity.getPaymentId(),
@@ -103,12 +118,10 @@ public class PaymentBOImpl implements PaymentBO {
                 entity.getPaymentDate().toString(),
                 entity.getStatus()
         );
-
     }
 
     @Override
     public boolean updateStatus(String paymentId, String newStatus) throws Exception {
-        assert paymentDAO != null;
         Payment payment = paymentDAO.findById(paymentId); // find by ID
         if (payment != null) {
             payment.setStatus(newStatus);

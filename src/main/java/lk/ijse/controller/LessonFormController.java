@@ -93,14 +93,21 @@ public class LessonFormController {
         cmbCourse.getItems().clear();
         cmbInstructor.getItems().clear();
 
-        List<StudentDTO> students = studentBO.getAllStudent();
-        List<CourseDTO> courses = courseBO.getAllCourses();
-        List<InstructorDTO> instructors = instructorBO.getAllInstructors();
+        try {
+            List<StudentDTO> students = studentBO.getAllStudent();
+            List<CourseDTO> courses = courseBO.getAllCourses();
+            List<InstructorDTO> instructors = instructorBO.getAllInstructors();
 
-        students.forEach(s -> cmbStudent.getItems().add(s.getStudentId()));
-        courses.forEach(c -> cmbCourse.getItems().add(c.getProgramId()));
-        instructors.forEach(i -> cmbInstructor.getItems().add(i.getInstructorId()));
+            students.forEach(s -> cmbStudent.getItems().add(s.getStudentId()));
+            courses.forEach(c -> cmbCourse.getItems().add(c.getProgramId()));
+            instructors.forEach(i -> cmbInstructor.getItems().add(i.getInstructorId()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load combo boxes!").show();
+        }
     }
+
 
     private LessonDTO getLessonFromFields() {
         String lessonTime = String.format("%02d:%02d:00", spinnerHour.getValue(), spinnerMinute.getValue());

@@ -11,80 +11,44 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.CourseBO;
 import lk.ijse.bo.custom.StudentBO;
+import lk.ijse.dto.CourseDTO;
 import lk.ijse.dto.StudentDTO;
 import lk.ijse.tdm.StudentTm;
-import lk.ijse.util.Regex;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class StudentFormController {
 
-    public TextField txtSearch;
-    @FXML
-    private TableColumn<?, ?> colAddress;
+    @FXML private TextField txtSearch, txtId, txtName, txtAddress, txtTel, txtEmail;
+    @FXML private DatePicker registerDatePicker;
+    @FXML private ListView<String> listCourses;
+    @FXML private TableView<StudentTm> tblStudent;
+    @FXML private TableColumn<StudentTm, String> colId;
+    @FXML private TableColumn<StudentTm, String> colName;
+    @FXML private TableColumn<StudentTm, String> colAddress;
+    @FXML private TableColumn<StudentTm, Long> colTel;
+    @FXML private TableColumn<StudentTm, String> colEmail;
+    @FXML private TableColumn<StudentTm, Date> colRegisterDate;
+    @FXML private TableColumn<StudentTm, String> colCourses;
 
-    @FXML
-    private TableColumn<?, ?> colId;
-
-    @FXML
-    private TableColumn<?, ?> colName;
-
-    @FXML
-    private TableColumn<?, ?> colRegisterDate;
-
-    @FXML
-    private TableColumn<?, ?> colTel;
-
-    @FXML
-    private DatePicker registerDatePicker;
-
-    @FXML
-    private AnchorPane studentForm;
-
-    @FXML
-    private TableView<StudentTm> tblStudent;
-
-    @FXML
-    private TextField txtAddress;
-
-    @FXML
-    private TextField txtId;
-
-    @FXML
-    private TextField txtName;
-
-    @FXML
-    private TextField txtTel;
-
-    StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
+    private final StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
+    private final CourseBO courseBO = (CourseBO) BOFactory.getBO(BOFactory.BOType.COURSE);
+    private List<CourseDTO> allCourses;
 
     public void initialize() {
         setCellValueFactory();
+        loadAllCourses();
         loadAllStudent();
         generateStudentId();
-    }
-
-    private void loadAllStudent() {
-        List<StudentDTO> allStudent = studentBO.getAllStudent();
-        ObservableList<StudentTm> studentTms = FXCollections.observableArrayList();
-
-        for (StudentDTO studentDTO : allStudent) {
-            studentTms.add(new StudentTm(
-                    studentDTO.getStudentId(),
-                    studentDTO.getName(),
-                    studentDTO.getAddress(),
-                    studentDTO.getTel(),
-                    studentDTO.getRegistrationDate(),
-                    null
-            ));
-        }
-        tblStudent.setItems(studentTms);
+        listCourses.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void setCellValueFactory() {
@@ -92,137 +56,114 @@ public class StudentFormController {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
         colTel.setCellValueFactory(new PropertyValueFactory<>("tel"));
+        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colRegisterDate.setCellValueFactory(new PropertyValueFactory<>("registrationDate"));
+        colCourses.setCellValueFactory(new PropertyValueFactory<>("coursesString"));
     }
 
-    @FXML
-    void btnClearOnAction(ActionEvent event) {
-        clearData();
+    private void generateStudentId() {
+        try {
+            String newId = studentBO.generateNewId();
+            txtId.setText(newId);
+            txtId.setEditable(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to generate new Student ID!").show();
+        }
     }
 
     private void clearData() {
-        // txtId.clear();  // Clear කරන්න අත්හැරන්න
-        generateStudentId(); // Clear කරන විට next auto ID set කරන්න
+        generateStudentId();
         txtName.clear();
         txtAddress.clear();
         txtTel.clear();
+        txtEmail.clear();
         registerDatePicker.setValue(null);
+        listCourses.getSelectionModel().clearSelection();
+    }
+
+    private void loadAllCourses() {
+        try {
+            allCourses = courseBO.getAllCourses();
+            ObservableList<String> courseNames = FXCollections.observableArrayList(
+                    allCourses.stream().map(CourseDTO::getProgramName).collect(Collectors.toList())
+            );
+            listCourses.setItems(courseNames);
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load courses!").show();
+        }
+    }
+
+    private boolean validateInput() {
+        if (txtName.getText().isEmpty() || txtAddress.getText().isEmpty() || txtTel.getText().isEmpty() ||
+                txtEmail.getText().isEmpty() || registerDatePicker.getValue() == null ||
+                listCourses.getSelectionModel().getSelectedItems().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Fill all fields & select at least one course!").show();
+            return false;
+        }
+
+        if (!Pattern.matches("\\d{10}", txtTel.getText())) {
+            new Alert(Alert.AlertType.WARNING, "Telephone must be 10 digits!").show();
+            return false;
+        }
+
+        if (!Pattern.matches("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$", txtEmail.getText())) {
+            new Alert(Alert.AlertType.WARNING, "Invalid email format!").show();
+            return false;
+        }
+        return true;
     }
 
     private StudentDTO getObject() {
-        long telNumber;
+        if (!validateInput()) return null;
 
-        try {
-            telNumber = Long.parseLong(txtTel.getText());
-        } catch (NumberFormatException e) {
-            new Alert(Alert.AlertType.WARNING, "Invalid phone number! Must be digits only.").show();
-            return null;
-        }
+        long tel = Long.parseLong(txtTel.getText());
 
-        if (registerDatePicker.getValue() == null) {
-            new Alert(Alert.AlertType.WARNING, "Please select a registration date!").show();
-            return null;
-        }
+        List<String> selectedCourseIds = listCourses.getSelectionModel().getSelectedItems().stream()
+                .map(name -> allCourses.stream()
+                        .filter(c -> c.getProgramName().equals(name))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Course not found: " + name))
+                        .getProgramId()
+                ).toList();
 
         return new StudentDTO(
                 txtId.getText(),
                 txtName.getText(),
                 txtAddress.getText(),
-                telNumber,
-                Date.valueOf(registerDatePicker.getValue())
+                tel,
+                txtEmail.getText(),
+                Date.valueOf(registerDatePicker.getValue()),
+                selectedCourseIds
         );
     }
 
     @FXML
-    void btnDeleteOnAction(ActionEvent event) {
-        String studentId = txtId.getText();
-
-        if (studentId.isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "Please select a student to delete!").show();
-            return;
-        }
+    void btnSaveOnAction(ActionEvent event) {
+        StudentDTO dto = getObject();
+        if (dto == null) return;
 
         try {
-            // Call BO to delete
-            studentBO.deleteStudent(studentId); // Pass only ID
-
-            new Alert(Alert.AlertType.INFORMATION, "Student deleted successfully!").show();
+            studentBO.saveStudent(dto);
+            new Alert(Alert.AlertType.INFORMATION, "Student Saved Successfully!").show();
+            clearData();
+            loadAllStudent();
+          //  openPaymentForm(dto);
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Failed to delete student!").show();
-        }
-
-        loadAllStudent();  // Refresh table
-        clearData();       // Clear input fields
-        generateStudentId();
-    }
-
-
-    @FXML
-    void btnSaveOnAction(ActionEvent event) {
-        if (isValidStudent()) {
-            StudentDTO studentDTO = getObject();
-
-            if (studentDTO == null) return;
-
-            try {
-                // Save Student
-                studentBO.saveStudent(studentDTO);
-
-                // Student Save Success
-                new Alert(Alert.AlertType.INFORMATION, "Student Saved Successfully! Now proceed to payment.").show();
-
-                // Open Payment Form and pass Student ID
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/paymentForm.fxml"));
-                Parent root = loader.load();
-
-                PaymentFormController paymentController = loader.getController();
-                paymentController.setStudentId(studentDTO.getStudentId()); // <-- Pass Student ID
-
-                Stage stage = new Stage();
-                stage.setTitle("Payment Form");
-                stage.setScene(new Scene(root));
-                stage.show();
-
-                clearData();
-                loadAllStudent();
-                generateStudentId();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                new Alert(Alert.AlertType.ERROR, "Failed to save Student!").show();
-            }
-
-        } else {
-            new Alert(Alert.AlertType.WARNING, "Please Enter All Fields !!").show();
+            new Alert(Alert.AlertType.ERROR, "Failed to save student!").show();
         }
     }
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
-        if (txtId.getText().isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "Please select a student to update!").show();
-            return;
-        }
-
-        // Validate telephone number
-        if (!Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel)) {
-            new Alert(Alert.AlertType.WARNING, "Invalid phone number! Must be digits only.").show();
-            return;
-        }
-
         StudentDTO dto = getObject();
-        if (dto == null) return; // Invalid input
-
-        // Validate other fields
-        if (!isValidStudent()) {
-            new Alert(Alert.AlertType.WARNING, "Please fill all fields correctly!").show();
-            return;
-        }
+        if (dto == null) return;
 
         try {
             studentBO.updateStudent(dto);
-            new Alert(Alert.AlertType.INFORMATION, "Student updated successfully!").show();
+            new Alert(Alert.AlertType.INFORMATION, "Student Updated Successfully!").show();
             clearData();
             loadAllStudent();
         } catch (Exception e) {
@@ -232,88 +173,139 @@ public class StudentFormController {
     }
 
     @FXML
-    void tblStudentOnClickAction(MouseEvent event) {
-        StudentTm selectedItem = tblStudent.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            txtId.setText(selectedItem.getStudentId());
-            txtName.setText(selectedItem.getName());
-            txtAddress.setText(selectedItem.getAddress());
-            txtTel.setText(String.valueOf(selectedItem.getTel()));
-            registerDatePicker.setValue(selectedItem.getRegistrationDate().toLocalDate());
+    void btnDeleteOnAction(ActionEvent event) {
+        if (txtId.getText().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Select a student to delete!").show();
+            return;
+        }
+        try {
+            studentBO.deleteStudent(txtId.getText());
+            new Alert(Alert.AlertType.INFORMATION, "Student Deleted Successfully!").show();
+            clearData();
+            loadAllStudent();
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to delete student!").show();
         }
     }
 
-    public boolean isValidStudent() {
-        if (!Regex.setTextColor(lk.ijse.util.TextField.STUDENTID, txtId)) return false;
-        if (!Regex.setTextColor(lk.ijse.util.TextField.NAME, txtName)) return false;
-        if (!Regex.setTextColor(lk.ijse.util.TextField.ADDRESS, txtAddress)) return false;
-        if (!Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel)) return false;
-        if (txtId.getText().isEmpty() || registerDatePicker.getValue() == null) return false;
-        return true;
+    @FXML
+    void btnClearOnAction(ActionEvent event) {
+        clearData();
     }
 
     @FXML
-    void txtAddressKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.ADDRESS, txtAddress);
-    }
+    void tblStudentOnClickAction(MouseEvent event) {
+        StudentTm selected = tblStudent.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            txtId.setText(selected.getStudentId());
+            txtName.setText(selected.getName());
+            txtAddress.setText(selected.getAddress());
+            txtTel.setText(String.valueOf(selected.getTel()));
+            txtEmail.setText(selected.getEmail());
+            registerDatePicker.setValue(selected.getRegistrationDate().toLocalDate());
+            listCourses.getSelectionModel().clearSelection();
 
-    @FXML
-    void txtNameKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.NAME, txtName);
-    }
-
-    @FXML
-    void txtTelKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.TEL, txtTel);
-    }
-
-    @FXML
-    void txtIdKeyAction(KeyEvent event) {
-        Regex.setTextColor(lk.ijse.util.TextField.STUDENTID, txtId);
-    }
-
-    public void txtIdOnAction(ActionEvent actionEvent) {
-    }
-
-    public void txtNameOnAction(ActionEvent actionEvent) {
-    }
-
-    public void txtAddressOnAction(ActionEvent actionEvent) {
-    }
-
-    @FXML
-    public void txtSearchKeyReleased(KeyEvent keyEvent) {
-        String searchText = txtSearch.getText().toLowerCase(); // search text
-
-        // Original list from DB
-        List<StudentDTO> allStudent = studentBO.getAllStudent();
-        ObservableList<StudentTm> filteredList = FXCollections.observableArrayList();
-
-        for (StudentDTO studentDTO : allStudent) {
-            if (studentDTO.getStudentId().toLowerCase().contains(searchText) ||
-                    studentDTO.getName().toLowerCase().contains(searchText)) {
-
-                filteredList.add(new StudentTm(
-                        studentDTO.getStudentId(),
-                        studentDTO.getName(),
-                        studentDTO.getAddress(),
-                        studentDTO.getTel(),
-                        studentDTO.getRegistrationDate(),
-                        null
-                ));
+            for (String courseId : selected.getEnrolledCourseIds()) {
+                allCourses.stream()
+                        .filter(c -> c.getProgramId().equals(courseId))
+                        .findFirst()
+                        .ifPresent(c -> listCourses.getSelectionModel().select(c.getProgramName()));
             }
         }
-
-        tblStudent.setItems(filteredList); // update TableView
     }
 
-    private void generateStudentId() {
-        String newId = studentBO.generateNewId();
-        txtId.setText(newId);
-        txtId.setEditable(false);
+    @FXML
+    void txtSearchKeyReleased(KeyEvent event) {
+        String searchText = txtSearch.getText().toLowerCase();
+        ObservableList<StudentTm> filteredList = FXCollections.observableArrayList();
+
+        try {
+            List<StudentDTO> allStudent = studentBO.getAllStudent();
+
+            for (StudentDTO dto : allStudent) {
+                if (dto.getStudentId().toLowerCase().contains(searchText) ||
+                        dto.getName().toLowerCase().contains(searchText) ||
+                        (dto.getEmail() != null && dto.getEmail().toLowerCase().contains(searchText))) {
+
+                    List<CourseDTO> courseList = dto.getEnrolledCourseIds().stream()
+                            .map(id -> allCourses.stream()
+                                    .filter(c -> c.getProgramId().equals(id))
+                                    .findFirst()
+                                    .map(c -> new CourseDTO(c.getProgramId(), c.getProgramName(), c.getDuration(), c.getFee(), ""))
+                                    .orElse(new CourseDTO(id, "", 0, 0.0, ""))
+                            ).toList();
+
+                    filteredList.add(new StudentTm(
+                            dto.getStudentId(),
+                            dto.getName(),
+                            dto.getAddress(),
+                            dto.getTel() != null ? dto.getTel() : 0L,
+                            dto.getEmail() != null ? dto.getEmail() : "",
+                            dto.getRegistrationDate(),
+                            courseList
+                    ));
+                }
+            }
+            tblStudent.setItems(filteredList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load students!").show();
+        }
     }
 
-    public void txtEmailKeyAction(KeyEvent keyEvent) {
+    private void loadAllStudent() {
+        ObservableList<StudentTm> studentTms = FXCollections.observableArrayList();
+        try {
+            List<StudentDTO> allStudent = studentBO.getAllStudent();
 
+            for (StudentDTO dto : allStudent) {
+                List<CourseDTO> courseList = dto.getEnrolledCourseIds().stream()
+                        .map(id -> allCourses.stream()
+                                .filter(c -> c.getProgramId().equals(id))
+                                .findFirst()
+                                .map(c -> new CourseDTO(c.getProgramId(), c.getProgramName(), c.getDuration(), c.getFee(), ""))
+                                .orElse(new CourseDTO(id, "", 0, 0.0, ""))
+                        ).toList();
+
+                studentTms.add(new StudentTm(
+                        dto.getStudentId(),
+                        dto.getName(),
+                        dto.getAddress(),
+                        dto.getTel() != null ? dto.getTel() : 0L,
+                        dto.getEmail() != null ? dto.getEmail() : "",
+                        dto.getRegistrationDate(),
+                        courseList
+                ));
+            }
+            tblStudent.setItems(studentTms);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load students!").show();
+        }
+    }
+
+    private void openPaymentForm(StudentDTO student) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/paymentForm.fxml"));
+            Parent root = loader.load();
+            PaymentFormController controller = loader.getController();
+            controller.setStudentAndCourses(student.getStudentId(),
+                    student.getEnrolledCourseIds().stream()
+                            .map(id -> allCourses.stream()
+                                    .filter(c -> c.getProgramId().equals(id))
+                                    .findFirst()
+                                    .orElseThrow())
+                            .toList());
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Payment Form");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to open Payment Form!").show();
+        }
     }
 }
