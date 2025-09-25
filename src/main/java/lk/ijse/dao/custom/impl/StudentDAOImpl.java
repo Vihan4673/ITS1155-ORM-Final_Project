@@ -22,12 +22,12 @@ public class StudentDAOImpl implements StudentDAO {
         try (Session session = FactoryConfiguration.getInstance().getSession()) {
             transaction = session.beginTransaction();
 
-            // 🔑 Ensure ID is generated before saving
+
             if (student.getStudentId() == null || student.getStudentId().isEmpty()) {
                 student.setStudentId(generateNewId());
             }
 
-            // Attach courses properly
+
             if (student.getCourses() != null && !student.getCourses().isEmpty()) {
                 List<Course> linkedCourses = student.getCourses().stream()
                         .map(c -> session.get(Course.class, c.getProgramId()))
@@ -36,7 +36,7 @@ public class StudentDAOImpl implements StudentDAO {
                 student.getCourses().addAll(linkedCourses);
             }
 
-            session.persist(student); // Save student
+            session.persist(student);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -69,7 +69,7 @@ public class StudentDAOImpl implements StudentDAO {
         }
     }
 
-    // -------------------- UPDATE --------------------
+
     @Override
     public void updateStudent(Student student) {
         Transaction transaction = null;
@@ -81,14 +81,14 @@ public class StudentDAOImpl implements StudentDAO {
                 throw new RuntimeException("Student does not exist: " + student.getStudentId());
             }
 
-            // Update fields
+
             existing.setName(student.getName());
             existing.setAddress(student.getAddress());
             existing.setTel(student.getTel());
             existing.setEmail(student.getEmail());
             existing.setRegistrationDate(student.getRegistrationDate());
 
-            // Update courses
+
             existing.getCourses().clear();
             if (student.getCourses() != null) {
                 existing.getCourses().addAll(student.getCourses());
@@ -102,7 +102,7 @@ public class StudentDAOImpl implements StudentDAO {
         }
     }
 
-    // -------------------- DELETE --------------------
+
     @Override
     public void deleteStudent(String studentId) {
         Transaction transaction = null;
@@ -111,7 +111,7 @@ public class StudentDAOImpl implements StudentDAO {
 
             Student student = session.get(Student.class, studentId);
             if (student != null) {
-                student.getCourses().clear(); // clear many-to-many
+                student.getCourses().clear();
                 session.delete(student);
             } else {
                 throw new RuntimeException("Student not found: " + studentId);
@@ -124,7 +124,6 @@ public class StudentDAOImpl implements StudentDAO {
         }
     }
 
-    // -------------------- UTILITY --------------------
     @Override
     public Long getStudentCount() {
         try (Session session = FactoryConfiguration.getInstance().getSession()) {

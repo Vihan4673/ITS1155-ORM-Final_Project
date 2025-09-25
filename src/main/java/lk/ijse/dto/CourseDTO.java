@@ -15,12 +15,12 @@ public class CourseDTO {
 
     private String programId;
     private String programName;
-    private int duration; // stored in months
+    private int duration;
     private double fee;
-    private String durationUnit; // මේක add කරන්න
+    private String durationUnit;
     private List<Payment> payments = new ArrayList<>();
 
-    // Convenience constructor without payments
+
     public CourseDTO(String programId, String programName, int duration, double fee, String durationUnit) {
         this.programId = programId;
         this.programName = programName;

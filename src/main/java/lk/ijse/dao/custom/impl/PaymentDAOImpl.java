@@ -31,7 +31,7 @@ public class PaymentDAOImpl implements PaymentDAO {
         Transaction transaction = null;
         try (Session session = FactoryConfiguration.getInstance().getSession()) {
             transaction = session.beginTransaction();
-            session.merge(payment); // safer than update()
+            session.merge(payment);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class PaymentDAOImpl implements PaymentDAO {
             if (lastId == null) {
                 return "PAY001";
             } else {
-                // Assumes format PAY### (e.g., PAY001)
+
                 String numericPart = lastId.substring(3);
                 int num = Integer.parseInt(numericPart) + 1;
                 return String.format("PAY%03d", num);

@@ -8,7 +8,7 @@ public class LessonDTO {
     private String courseId;
     private String instructorId;
     private LocalDate lessonDate;
-    private String lessonTime;  // HH:mm:ss format
+    private String lessonTime;
     private int duration;
 
     public LessonDTO() {}
@@ -23,7 +23,7 @@ public class LessonDTO {
         this.duration = duration;
     }
 
-    // getters & setters
+
     public String getLessonId() { return lessonId; }
     public void setLessonId(String lessonId) { this.lessonId = lessonId; }
     public String getStudentId() { return studentId; }

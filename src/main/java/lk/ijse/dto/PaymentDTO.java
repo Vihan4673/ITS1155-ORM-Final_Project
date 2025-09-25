@@ -11,12 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDTO {
-    private String paymentId;        // Unique Payment ID
-    private String studentId;        // Associated Student ID
-    private List<String> programIds; // List of enrolled Course IDs
-    private double advanceAmount;    // Amount paid (partial or full)
-    private double totalFee;         // Total fee for selected courses
-    private LocalDate paymentDate;   // Payment date (yyyy-MM-dd)
-    private String status;           // PAID, PENDING, PARTIAL
+    private String paymentId;
+    private String studentId;
+    private List<String> programIds;
+    private double advanceAmount;
+    private double totalFee;
+    private LocalDate paymentDate;
+    private String status;
 
 }

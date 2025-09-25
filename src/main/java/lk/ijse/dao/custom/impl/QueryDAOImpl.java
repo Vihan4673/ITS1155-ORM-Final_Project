@@ -18,12 +18,12 @@ public class QueryDAOImpl implements QueryDAO {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
 
-        // First, get the total number of culinary programs
+
         String countProgramsHql = "SELECT COUNT(DISTINCT p.programId) FROM Course p";
         Query<Long> countQuery = session.createQuery(countProgramsHql, Long.class);
         Long totalPrograms = countQuery.uniqueResult();
 
-        // Query to find students who have payments for all programs
+
         String hql = "SELECT s FROM Student s " +
                 "JOIN s.payments p " +
                 "JOIN p.programs pr " +

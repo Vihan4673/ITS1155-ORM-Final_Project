@@ -8,19 +8,15 @@ import java.util.List;
 
 public interface CourseDAO extends SuperDAO {
 
-    // CRUD operations
+
     void saveCourse(Course course);
     void updateCourse(Course course);
     void deleteCourse(Course course);
-
-    // Read operations
     List<Course> getAllCourses();
     Course getCourse(String programId);
     Course findById(String programId);
     List<Course> findAll();
-
-    // Utility methods
-    CourseDTO getCourseByName(String programName); // Check course by name
-    Long getCourseCount(); // Total number of courses
-    String generateCourseId(); // Auto-generate new course ID
+    CourseDTO getCourseByName(String programName);
+    Long getCourseCount();
+    String generateCourseId();
 }

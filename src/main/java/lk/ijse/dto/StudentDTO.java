@@ -21,7 +21,7 @@ public class StudentDTO {
     private Date registrationDate;
     private List<String> enrolledCourseIds;
 
-    // Constructor without courses
+
     public StudentDTO(String studentId, String name, String address, Long tel, String email, Date registrationDate) {
         this.studentId = studentId;
         this.name = name;
@@ -32,7 +32,7 @@ public class StudentDTO {
         this.enrolledCourseIds = new ArrayList<>();
     }
 
-    // Get comma-separated course IDs
+
     public String getCoursesString() {
         if (enrolledCourseIds == null || enrolledCourseIds.isEmpty()) return "";
         return String.join(", ", enrolledCourseIds);

@@ -76,7 +76,7 @@ public class CourseDAOImpl implements CourseDAO {
                         result.getProgramName(),
                         result.getDuration(),
                         result.getFee(),
-                        "Months" // මෙතන unit එක provide කරන්න
+                        "Months"
                 );
             } else {
                 return null;
