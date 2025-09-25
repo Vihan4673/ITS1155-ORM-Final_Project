@@ -22,7 +22,7 @@ public class Course {
     private String programName;
 
     @Column(nullable = false)
-    private int duration; // stored in months
+    private int duration;
 
     @Column(nullable = false)
     private double fee;
@@ -37,7 +37,7 @@ public class Course {
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
-    // Custom constructor for convenience (without relationships)
+
     public Course(String programId, String programName, int duration, double fee) {
         this.programId = programId;
         this.programName = programName;
@@ -45,7 +45,7 @@ public class Course {
         this.fee = fee;
     }
 
-    // Constructor with only ID, defaults others
+
     public Course(String programId) {
         this.programId = programId;
         this.programName = "";

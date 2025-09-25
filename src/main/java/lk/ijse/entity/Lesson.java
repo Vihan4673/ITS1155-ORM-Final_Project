@@ -32,5 +32,5 @@ public class Lesson {
     private LocalDateTime lessonDate;
 
     @Column(nullable = false)
-    private int duration; // duration in minutes or hours depending on your application
+    private int duration;
 }

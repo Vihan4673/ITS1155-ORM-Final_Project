@@ -47,9 +47,9 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
 
-    // ---------------- Constructors -------------------
 
-    // Constructor without relations
+
+
     public Student(String studentId, String name, String address, Long tel, String email, Date registrationDate) {
         if (studentId == null || studentId.isEmpty()) {
             throw new IllegalArgumentException("studentId cannot be null or empty. Generate it before saving.");
@@ -62,7 +62,7 @@ public class Student {
         this.registrationDate = registrationDate;
     }
 
-    // Constructor with only ID
+
     public Student(String studentId) {
         if (studentId == null || studentId.isEmpty()) {
             throw new IllegalArgumentException("studentId cannot be null or empty. Generate it before saving.");

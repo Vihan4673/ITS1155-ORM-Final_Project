@@ -13,8 +13,8 @@ import java.time.LocalDate;
 public class ViewAllTm {
     private String studentId;
     private String studentName;
-    private LocalDate registerDate;   // Changed from java.sql.Date to LocalDate
-    private LocalDate installment;    // Changed from java.sql.Date to LocalDate
+    private LocalDate registerDate;
+    private LocalDate installment;
     private int balance;
-    private Button payment;           // Keep button for actions
+    private Button payment;
 }

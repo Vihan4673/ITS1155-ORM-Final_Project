@@ -13,7 +13,7 @@ import java.util.List;
 public class Instructor {
 
     @Id
-    private String instructorId;  // String ID, manually assign
+    private String instructorId;
 
     @Column(nullable = false)
     private String name;
