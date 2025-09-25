@@ -19,13 +19,13 @@ public class StudentBOImpl implements StudentBO {
     public void saveStudent(StudentDTO dto) {
         if (dto == null) throw new IllegalArgumentException("StudentDTO cannot be null");
 
-        // ⚡ Always assign studentId
+
         if (dto.getStudentId() == null || dto.getStudentId().isEmpty()) {
             dto.setStudentId(generateNewId());
         }
 
         Student student = mapDtoToEntity(dto);
-        studentDAO.saveStudent(student); // Hibernate save
+        studentDAO.saveStudent(student);
     }
 
     @Override
@@ -83,7 +83,6 @@ public class StudentBOImpl implements StudentBO {
         }
     }
 
-    // ---------------- Mapping ----------------
     private Student mapDtoToEntity(StudentDTO dto) {
         if (dto == null) return null;
 
@@ -104,7 +103,7 @@ public class StudentBOImpl implements StudentBO {
 
         if (dto.getEnrolledCourseIds() != null && !dto.getEnrolledCourseIds().isEmpty()) {
             List<Course> courses = dto.getEnrolledCourseIds().stream()
-                    .map(Course::new) // only ID constructor
+                    .map(Course::new)
                     .collect(Collectors.toList());
             student.setCourses(courses);
         }

@@ -70,8 +70,6 @@ public class LessonBOImpl implements LessonBO {
         return dtos;
     }
 
-    // --- Helper Methods ---
-    // LessonDTO ➜ Lesson entity
     private Lesson convertToEntity(LessonDTO dto) {
         Lesson lesson = new Lesson();
         lesson.setLessonId(dto.getLessonId());
@@ -84,18 +82,18 @@ public class LessonBOImpl implements LessonBO {
         lesson.setCourse(course);
         lesson.setInstructor(instructor);
 
-        // Convert LocalDate + String Time to Timestamp
+
         LocalDateTime dateTime = LocalDateTime.of(dto.getLessonDate(), LocalTime.parse(dto.getLessonTime()));
-        lesson.setLessonDate(Timestamp.valueOf(dateTime).toLocalDateTime()); // ok
+        lesson.setLessonDate(Timestamp.valueOf(dateTime).toLocalDateTime());
 
         lesson.setDuration(dto.getDuration());
         return lesson;
     }
 
-    // Lesson entity ➜ LessonDTO
+
     private LessonDTO convertToDTO(Lesson lesson) {
         Timestamp ts = Timestamp.valueOf(lesson.getLessonDate());
-        LocalDateTime dateTime = ts.toLocalDateTime(); // fix: convert Timestamp ➜ LocalDateTime
+        LocalDateTime dateTime = ts.toLocalDateTime();
         return new LessonDTO(
                 lesson.getLessonId(),
                 lesson.getStudent().getStudentId(),
