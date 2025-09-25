@@ -26,8 +26,10 @@ public class QueryDAOImpl implements QueryDAO {
         // Query to find students who have payments for all programs
         String hql = "SELECT s FROM Student s " +
                 "JOIN s.payments p " +
+                "JOIN p.programs pr " +
                 "GROUP BY s.studentId " +
-                "HAVING COUNT(DISTINCT p.program.programId) = :totalPrograms";
+                "HAVING COUNT(DISTINCT pr.programId) = :totalPrograms";
+
 
         Query<Student> query = session.createQuery(hql, Student.class);
         query.setParameter("totalPrograms", totalPrograms);
@@ -49,7 +51,7 @@ public class QueryDAOImpl implements QueryDAO {
         String hql = "SELECT s, p, c " +
                 "FROM Student s " +
                 "JOIN s.payments p " +
-                "JOIN p.program c " +
+                "JOIN p.programs c " +   // <-- use 'programs' (the collection)
                 "WHERE c.programName = :programName";
 
         results = session.createQuery(hql)

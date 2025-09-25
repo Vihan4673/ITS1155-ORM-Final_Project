@@ -34,11 +34,12 @@ public class Payment {
     @Column(nullable = false, length = 20)
     private String status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "payment_courses",
             joinColumns = @JoinColumn(name = "payment_id"),
             inverseJoinColumns = @JoinColumn(name = "program_id")
     )
     private List<Course> programs;
+
 }

@@ -53,7 +53,6 @@ public class PayController {
 
             String newStatus = amountPaid >= total ? "COMPLETED" : "PENDING";
 
-            // Update payment DTO
             PaymentDTO dto = new PaymentDTO(
                     selectedPayment.getPaymentId(),
                     selectedPayment.getStudentId(),
@@ -64,7 +63,7 @@ public class PayController {
                     newStatus
             );
 
-            if (paymentBO.updatePayment(dto)) {
+            if (paymentBO.updateStatus(selectedPayment.getPaymentId(), newStatus)) {
                 new Alert(Alert.AlertType.INFORMATION, "Payment updated successfully!").show();
                 closeForm();
             } else {
@@ -78,6 +77,7 @@ public class PayController {
             new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
         }
     }
+
 
     /** Clear button clicked */
     @FXML

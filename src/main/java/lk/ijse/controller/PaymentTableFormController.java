@@ -146,18 +146,19 @@ public class PaymentTableFormController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/pay.fxml"));
             Parent root = loader.load();
 
-            PaymentFormController controller = loader.getController();
+            // Correct controller type
+            PayController controller = loader.getController();
 
-            List<CourseDTO> courses = payment.getProgramIds() != null
-                    ? payment.getProgramIds().stream().map(id -> new CourseDTO(id, null, 0, 0, null)).toList()
-                    : Collections.emptyList();
-
-            controller.setStudentAndCourses(payment.getStudentId(), courses);
+            // Prepare data to set
+            controller.setPayment(payment);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Make Payment");
             stage.show();
+
+            // Refresh table after Pay form is closed
+            stage.setOnHidden(e -> loadPayments());
 
         } catch (Exception e) {
             e.printStackTrace();
