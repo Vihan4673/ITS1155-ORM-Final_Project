@@ -118,6 +118,19 @@ public class StudentFormController {
     private StudentDTO getObject() {
         if (!validateInput()) return null;
 
+        // ⚡ ensure studentId is set
+        String studentId = txtId.getText();
+        if (studentId == null || studentId.isEmpty()) {
+            try {
+                studentId = studentBO.generateNewId(); // generate new ID
+                txtId.setText(studentId); // update UI
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Alert(Alert.AlertType.ERROR, "Failed to generate Student ID!").show();
+                return null;
+            }
+        }
+
         long tel = Long.parseLong(txtTel.getText());
 
         List<String> selectedCourseIds = listCourses.getSelectionModel().getSelectedItems().stream()
@@ -129,7 +142,7 @@ public class StudentFormController {
                 ).toList();
 
         return new StudentDTO(
-                txtId.getText(),
+                studentId,
                 txtName.getText(),
                 txtAddress.getText(),
                 tel,
@@ -145,11 +158,18 @@ public class StudentFormController {
         if (dto == null) return;
 
         try {
+            // ⚡ Save student
             studentBO.saveStudent(dto);
+
             new Alert(Alert.AlertType.INFORMATION, "Student Saved Successfully!").show();
+
+            // Clear & reload table
             clearData();
             loadAllStudent();
-          //  openPaymentForm(dto);
+
+            // ⚡ Open Payment Form
+            openPaymentForm(dto);
+
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to save student!").show();

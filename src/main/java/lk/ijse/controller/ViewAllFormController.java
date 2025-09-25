@@ -84,7 +84,7 @@ public class ViewAllFormController {
         for (Object[] objects : allEqualByProgramName) {
             Student student = (Student) objects[0];
             Payment enrollment = (Payment) objects[1];
-            viewAllTms.add(new ViewAllTm(student.getStudentId(),student.getName(),student.getRegistrationDate(),enrollment.getPaymentDate(), (int) enrollment.getAmount(),null));
+            viewAllTms.add(new ViewAllTm(student.getStudentId(),student.getName(), student.getRegistrationDate().toLocalDate(),enrollment.getPaymentDate(), (int) enrollment.getAmount(),null));
         }
         viewTbl.setItems(viewAllTms);
         lblStudentCount.setText(String.valueOf(allEqualByProgramName.size()));

@@ -2,8 +2,10 @@ package lk.ijse.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.PaymentBO;
@@ -18,11 +20,12 @@ import java.util.stream.Collectors;
 public class PaymentFormController {
 
     @FXML private TextField txtPaymentId;
-    @FXML private TextField txtStudent;
+    @FXML private ComboBox<StudentDTO> cmbStudent;
     @FXML private ListView<String> lstCourses;
     @FXML private TextField txtTotalFee;
-    @FXML private TextField txtAdvance;
+    @FXML private TextField txtAmount;
     @FXML private TextField txtRemaining;
+    @FXML private Label lblStatus;
     @FXML private DatePicker dpPaymentDate;
     @FXML private Button btnMakePayment;
     @FXML private Button btnCancel;
@@ -30,65 +33,67 @@ public class PaymentFormController {
     private final PaymentBO paymentBO = (PaymentBO) BOFactory.getBO(BOFactory.BOType.PAYMENT);
     private final StudentBO studentBO = (StudentBO) BOFactory.getBO(BOFactory.BOType.STUDENT);
 
+    private List<CourseDTO> selectedCourses;
     private double totalFee = 0.0;
 
     @FXML
     public void initialize() {
         generatePaymentId();
-        txtAdvance.textProperty().addListener((obs, oldVal, newVal) -> updateRemaining());
+        lstCourses.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        txtAmount.textProperty().addListener((obs, oldVal, newVal) -> updateRemaining());
     }
 
     private void generatePaymentId() {
         try {
             txtPaymentId.setText(paymentBO.generatePaymentId());
         } catch (Exception e) {
-            txtPaymentId.setText("P1001"); // fallback ID
+            txtPaymentId.setText("PAY001"); // fallback
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Load student and their courses
-     */
-    public void loadStudentCourses(String studentId) {
+    public void loadStudentCourses(String studentId, List<CourseDTO> courses) {
         try {
             StudentDTO student = studentBO.getStudent(studentId);
             if (student != null) {
-                txtStudent.setText(student.getStudentId() + " - " + student.getName());
+                cmbStudent.setValue(student);
+                selectedCourses = courses;
 
-                // Load course names
-                List<String> courseNames = student.getEnrolledCourseIds().stream().collect(Collectors.toList());
-                lstCourses.setItems(FXCollections.observableArrayList(courseNames));
-
-                // Calculate total fee
-                totalFee = student.getEnrolledCourseIds().size() * 1000; // Example: each course fee = 1000
+                ObservableList<String> courseNames = FXCollections.observableArrayList();
+                totalFee = 0.0;
+                for (CourseDTO course : selectedCourses) {
+                    courseNames.add(course.getProgramName() + " - Rs." + course.getFee());
+                    totalFee += course.getFee();
+                }
+                lstCourses.setItems(courseNames);
                 txtTotalFee.setText(String.valueOf(totalFee));
-
-                // Clear previous amounts
-                txtAdvance.clear();
+                txtAmount.clear();
                 txtRemaining.setText(String.valueOf(totalFee));
+                lblStatus.setText("PENDING");
             }
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Failed to load student data: " + e.getMessage()).show();
             e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to load student data: " + e.getMessage()).show();
         }
     }
 
     private void updateRemaining() {
         try {
-            String advanceText = txtAdvance.getText();
-            double advance = advanceText.isEmpty() ? 0.0 : Double.parseDouble(advanceText);
+            double advance = txtAmount.getText().isEmpty() ? 0.0 : Double.parseDouble(txtAmount.getText());
             double remaining = totalFee - advance;
             txtRemaining.setText(String.valueOf(remaining));
+            lblStatus.setText(advance >= totalFee ? "COMPLETE" : "PENDING");
         } catch (NumberFormatException e) {
             txtRemaining.setText(String.valueOf(totalFee));
+            lblStatus.setText("PENDING");
         }
     }
 
     @FXML
     private void btnMakePaymentOnAction() {
         try {
-            // Validations
-            if (txtStudent.getText().isEmpty()) {
+            if (cmbStudent.getValue() == null) {
                 new Alert(Alert.AlertType.WARNING, "Please select a student!").show();
                 return;
             }
@@ -100,37 +105,47 @@ public class PaymentFormController {
                 new Alert(Alert.AlertType.WARNING, "Please select a payment date!").show();
                 return;
             }
-            if (txtAdvance.getText().isEmpty()) {
-                new Alert(Alert.AlertType.WARNING, "Please enter the advance amount!").show();
+            if (txtAmount.getText().isEmpty()) {
+                new Alert(Alert.AlertType.WARNING, "Please enter the amount paid!").show();
                 return;
             }
 
-            double advance = Double.parseDouble(txtAdvance.getText());
-            if (advance <= 0) {
-                new Alert(Alert.AlertType.WARNING, "Advance must be greater than 0!").show();
+            double advance = Double.parseDouble(txtAmount.getText());
+            if (advance < 5000) {
+                new Alert(Alert.AlertType.WARNING, "Minimum advance is Rs.5000!").show();
+                return;
+            }
+            if (advance > totalFee) {
+                new Alert(Alert.AlertType.WARNING, "Amount cannot exceed total fee!").show();
                 return;
             }
 
-            // Create DTO
+            String studentId = cmbStudent.getValue().getStudentId();
+            List<String> programIds = selectedCourses.stream()
+                    .map(CourseDTO::getProgramId)
+                    .collect(Collectors.toList());
+            String status = advance >= totalFee ? "COMPLETE" : "PENDING";
+
             PaymentDTO dto = new PaymentDTO(
                     txtPaymentId.getText(),
-                    txtStudent.getText().split(" - ")[0], // extract studentId
-                    String.join(",", lstCourses.getItems()),
+                    studentId,
+                    programIds,
                     advance,
-                    dpPaymentDate.getValue().toString(),
-                    txtRemaining.getText()
+                    totalFee,
+                    dpPaymentDate.getValue(),
+                    status
             );
 
-            // Save
-            if (paymentBO.savePayment(dto)) {
-                new Alert(Alert.AlertType.INFORMATION, "Payment Saved Successfully!").show();
+            boolean saved = paymentBO.savePayment(dto);
+            if (saved) {
+                new Alert(Alert.AlertType.INFORMATION, "Payment saved successfully!").show();
                 closeForm();
             } else {
                 new Alert(Alert.AlertType.ERROR, "Failed to save payment!").show();
             }
 
         } catch (NumberFormatException e) {
-            new Alert(Alert.AlertType.ERROR, "Invalid advance amount!").show();
+            new Alert(Alert.AlertType.ERROR, "Invalid amount!").show();
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
             e.printStackTrace();
@@ -142,11 +157,16 @@ public class PaymentFormController {
         closeForm();
     }
 
+
     private void closeForm() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
     }
 
-    public void setStudentAndCourses(String studentId, List<CourseDTO> list) {
+    public void setStudentAndCourses(String studentId, List<CourseDTO> courses) {
+        loadStudentCourses(studentId, courses);
     }
+
+    public void cmbStudentOnAction(ActionEvent actionEvent) {}
+    public void txtSearchKeyReleased(KeyEvent keyEvent) {}
 }

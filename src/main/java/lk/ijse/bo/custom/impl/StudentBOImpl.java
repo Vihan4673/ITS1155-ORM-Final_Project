@@ -19,17 +19,13 @@ public class StudentBOImpl implements StudentBO {
     public void saveStudent(StudentDTO dto) {
         if (dto == null) throw new IllegalArgumentException("StudentDTO cannot be null");
 
-        try {
-            // Always generate ID if missing
-            if (dto.getStudentId() == null || dto.getStudentId().isEmpty()) {
-                dto.setStudentId(studentDAO.generateNewId());
-            }
-
-            Student student = mapDtoToEntity(dto);
-            studentDAO.saveStudent(student);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save student: " + e.getMessage(), e);
+        // ⚡ Always assign studentId
+        if (dto.getStudentId() == null || dto.getStudentId().isEmpty()) {
+            dto.setStudentId(generateNewId());
         }
+
+        Student student = mapDtoToEntity(dto);
+        studentDAO.saveStudent(student); // Hibernate save
     }
 
     @Override
@@ -44,7 +40,7 @@ public class StudentBOImpl implements StudentBO {
     }
 
     @Override
-    public void deleteStudent(String studentId) {
+    public boolean deleteStudent(String studentId) {
         if (studentId == null || studentId.isEmpty())
             throw new IllegalArgumentException("Student ID cannot be null or empty");
 
@@ -53,6 +49,7 @@ public class StudentBOImpl implements StudentBO {
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete student: " + e.getMessage(), e);
         }
+        return false;
     }
 
     @Override

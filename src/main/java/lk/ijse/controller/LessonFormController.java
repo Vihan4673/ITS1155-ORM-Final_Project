@@ -1,13 +1,15 @@
 package lk.ijse.controller;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.CourseBO;
 import lk.ijse.bo.custom.InstructorBO;
@@ -33,7 +35,7 @@ public class LessonFormController {
 
     @FXML private TextField txtLessonId;
     @FXML private DatePicker dateLesson;
-    @FXML private ComboBox<String> cmbStudent;
+    @FXML private ListView<StudentDTO> listStudents;
     @FXML private ComboBox<String> cmbCourse;
     @FXML private ComboBox<String> cmbInstructor;
     @FXML private TextField txtDuration;
@@ -51,6 +53,7 @@ public class LessonFormController {
         loadAllLessons();
         loadComboBoxes();
         initializeSpinners();
+        listStudents.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void initializeSpinners() {
@@ -60,16 +63,16 @@ public class LessonFormController {
         spinnerMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         spinnerMinute.setEditable(true);
     }
-
     private void setCellValueFactory() {
-        colLessonId.setCellValueFactory(new PropertyValueFactory<>("lessonId"));
-        colStudent.setCellValueFactory(new PropertyValueFactory<>("studentId"));
-        colCourse.setCellValueFactory(new PropertyValueFactory<>("courseId"));
-        colInstructor.setCellValueFactory(new PropertyValueFactory<>("instructorId"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("lessonDate"));
-        colTime.setCellValueFactory(new PropertyValueFactory<>("lessonTime"));
-        colDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
+        colLessonId.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getLessonId()));
+        colStudent.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getStudentId()));
+        colCourse.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getCourseId()));
+        colInstructor.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getInstructorId()));
+        colDate.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getLessonDate()));
+        colTime.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getLessonTime()));
+        colDuration.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDuration()));
     }
+
 
     private void loadAllLessons() {
         List<LessonDTO> allLessons = lessonBO.getAllLesson();
@@ -89,16 +92,16 @@ public class LessonFormController {
     }
 
     private void loadComboBoxes() {
-        cmbStudent.getItems().clear();
         cmbCourse.getItems().clear();
         cmbInstructor.getItems().clear();
+        listStudents.getItems().clear();
 
         try {
             List<StudentDTO> students = studentBO.getAllStudent();
             List<CourseDTO> courses = courseBO.getAllCourses();
             List<InstructorDTO> instructors = instructorBO.getAllInstructors();
 
-            students.forEach(s -> cmbStudent.getItems().add(s.getStudentId()));
+            listStudents.getItems().addAll(students);
             courses.forEach(c -> cmbCourse.getItems().add(c.getProgramId()));
             instructors.forEach(i -> cmbInstructor.getItems().add(i.getInstructorId()));
 
@@ -108,12 +111,11 @@ public class LessonFormController {
         }
     }
 
-
-    private LessonDTO getLessonFromFields() {
+    private LessonDTO getLessonFromFields(StudentDTO student) {
         String lessonTime = String.format("%02d:%02d:00", spinnerHour.getValue(), spinnerMinute.getValue());
         return new LessonDTO(
                 txtLessonId.getText(),
-                cmbStudent.getValue(),
+                student.getStudentId(),
                 cmbCourse.getValue(),
                 cmbInstructor.getValue(),
                 dateLesson.getValue(),
@@ -130,7 +132,7 @@ public class LessonFormController {
     private void clearData() {
         txtLessonId.setText(lessonBO.generateNextLessonId());
         dateLesson.setValue(null);
-        cmbStudent.getSelectionModel().clearSelection();
+        listStudents.getSelectionModel().clearSelection();
         cmbCourse.getSelectionModel().clearSelection();
         cmbInstructor.getSelectionModel().clearSelection();
         spinnerHour.getValueFactory().setValue(9);
@@ -140,23 +142,61 @@ public class LessonFormController {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        lessonBO.deleteLesson(getLessonFromFields());
+        ObservableList<StudentDTO> selectedStudents = listStudents.getSelectionModel().getSelectedItems();
+        if (selectedStudents.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Select a student to delete lesson").show();
+            return;
+        }
+        for (StudentDTO student : selectedStudents) {
+            LessonDTO dto = getLessonFromFields(student);
+            lessonBO.deleteLesson(dto);
+        }
         clearData();
         loadAllLessons();
     }
 
     @FXML
     void btnSaveOnAction(ActionEvent event) {
-        lessonBO.saveLesson(getLessonFromFields());
-        clearData();
-        loadAllLessons();
+        ObservableList<StudentDTO> selectedStudents = listStudents.getSelectionModel().getSelectedItems();
+        if (selectedStudents.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Select at least one student").show();
+            return;
+        }
+
+        try {
+            for (StudentDTO student : selectedStudents) {
+                LessonDTO dto = getLessonFromFields(student);
+                lessonBO.saveLesson(dto);
+            }
+            new Alert(Alert.AlertType.INFORMATION, "Lesson(s) saved successfully!").show();
+            clearData();
+            loadAllLessons();
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
+        }
     }
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
-        lessonBO.updateLesson(getLessonFromFields());
-        clearData();
-        loadAllLessons();
+        ObservableList<StudentDTO> selectedStudents = listStudents.getSelectionModel().getSelectedItems();
+        if (selectedStudents.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Select at least one student").show();
+            return;
+        }
+
+        try {
+            for (StudentDTO student : selectedStudents) {
+                LessonDTO dto = getLessonFromFields(student);
+                lessonBO.updateLesson(dto);
+            }
+            new Alert(Alert.AlertType.INFORMATION, "Lesson(s) updated successfully!").show();
+            clearData();
+            loadAllLessons();
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
+        }
     }
 
     @FXML
@@ -165,7 +205,6 @@ public class LessonFormController {
         if (selected != null) {
             txtLessonId.setText(selected.getLessonId());
             dateLesson.setValue(selected.getLessonDate());
-            cmbStudent.setValue(selected.getStudentId());
             cmbCourse.setValue(selected.getCourseId());
             cmbInstructor.setValue(selected.getInstructorId());
 
@@ -174,6 +213,12 @@ public class LessonFormController {
             spinnerMinute.getValueFactory().setValue(Integer.parseInt(timeParts[1]));
 
             txtDuration.setText(String.valueOf(selected.getDuration()));
+
+            // select the student in ListView
+            listStudents.getItems().stream()
+                    .filter(s -> s.getStudentId().equals(selected.getStudentId()))
+                    .findFirst()
+                    .ifPresent(s -> listStudents.getSelectionModel().select(s));
         }
     }
 
@@ -200,7 +245,6 @@ public class LessonFormController {
                 ));
             }
         }
-
         tblLesson.setItems(filteredList);
     }
 }

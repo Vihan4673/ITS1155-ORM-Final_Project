@@ -20,7 +20,6 @@ public class Student {
     @Column(name = "student_id", nullable = false, length = 10)
     private String studentId;
 
-
     @Column(nullable = false)
     private String name;
 
@@ -48,9 +47,14 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
 
+    // ---------------- Constructors -------------------
+
     // Constructor without relations
     public Student(String studentId, String name, String address, Long tel, String email, Date registrationDate) {
-        this.studentId = studentId; // ⚡ manual assign, e.g., "S1001"
+        if (studentId == null || studentId.isEmpty()) {
+            throw new IllegalArgumentException("studentId cannot be null or empty. Generate it before saving.");
+        }
+        this.studentId = studentId;
         this.name = name;
         this.address = address;
         this.tel = tel;
@@ -60,6 +64,9 @@ public class Student {
 
     // Constructor with only ID
     public Student(String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            throw new IllegalArgumentException("studentId cannot be null or empty. Generate it before saving.");
+        }
         this.studentId = studentId;
     }
 }

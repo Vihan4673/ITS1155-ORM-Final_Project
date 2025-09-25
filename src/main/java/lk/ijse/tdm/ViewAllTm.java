@@ -5,16 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ViewAllTm {
     private String studentId;
     private String studentName;
-    private Date registerDate;
-    private Date installment;
+    private LocalDate registerDate;   // Changed from java.sql.Date to LocalDate
+    private LocalDate installment;    // Changed from java.sql.Date to LocalDate
     private int balance;
-    private Button payment;
+    private Button payment;           // Keep button for actions
 }
