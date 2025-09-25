@@ -105,7 +105,6 @@ public class HomeController {
             new Alert(Alert.AlertType.ERROR, "Failed to load recent student data!").show();
         }
     }
-
     private void loadStudentChart() {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Student Registrations");
@@ -117,18 +116,22 @@ public class HomeController {
             session = FactoryConfiguration.getInstance().getSession();
             transaction = session.beginTransaction();
 
+            // JPQL query to count students per month
             List<Object[]> results = session.createQuery(
-                            "SELECT MONTH(s.registrationDate), COUNT(s) " +
+                            "SELECT FUNCTION('MONTH', s.registrationDate), COUNT(s) " +
                                     "FROM Student s " +
-                                    "GROUP BY MONTH(s.registrationDate)", Object[].class)
+                                    "GROUP BY FUNCTION('MONTH', s.registrationDate) " +
+                                    "ORDER BY FUNCTION('MONTH', s.registrationDate)", Object[].class)
                     .list();
 
             for (Object[] row : results) {
-                Integer month = ((Number) row[0]).intValue();
-                Integer count = ((Number) row[1]).intValue();
+                int month = ((Number) row[0]).intValue();
+                long count = ((Number) row[1]).longValue();
+
                 String monthName = LocalDate.of(LocalDate.now().getYear(), month, 1)
                         .getMonth()
                         .getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
                 series.getData().add(new XYChart.Data<>(monthName, count));
             }
 
@@ -145,6 +148,7 @@ public class HomeController {
         }
     }
 
+
     private void loadIncome() {
         Session session = null;
         Transaction transaction = null;
@@ -156,12 +160,13 @@ public class HomeController {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentYear = LocalDate.now().getYear();
 
-            Double totalIncome = (Double) session.createNativeQuery(
+            // DB column name = payment_date
+            Double totalIncome = ((Number) session.createNativeQuery(
                             "SELECT SUM(amount) FROM payments " +
-                                    "WHERE MONTH(paymentDate) = :month AND YEAR(paymentDate) = :year")
+                                    "WHERE MONTH(payment_date) = :month AND YEAR(payment_date) = :year")
                     .setParameter("month", currentMonth)
                     .setParameter("year", currentYear)
-                    .uniqueResult();
+                    .uniqueResult()).doubleValue();
 
             if (totalIncome == null) totalIncome = 0.0;
 
@@ -176,4 +181,5 @@ public class HomeController {
             if (session != null) session.close();
         }
     }
+
 }

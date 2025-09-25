@@ -110,8 +110,7 @@ public class ViewAllFormController {
 //
 //    private void loadAddPaymentForm(ViewAllTm selectedItem, String programName) {
 //        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addPaymentForm.fxml"));
-//            Scene scene = new Scene(loader.load());
+//
 //
 //            // Get the controller for addProgramForm
 //            AddPaymentFormController controller = loader.getController();

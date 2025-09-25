@@ -54,7 +54,21 @@ public class LessonFormController {
         loadComboBoxes();
         initializeSpinners();
         listStudents.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Display only ID + Name in ListView
+        listStudents.setCellFactory(param -> new ListCell<StudentDTO>() {
+            @Override
+            protected void updateItem(StudentDTO student, boolean empty) {
+                super.updateItem(student, empty);
+                if (empty || student == null) {
+                    setText(null);
+                } else {
+                    setText(student.getStudentId() + " - " + student.getName());
+                }
+            }
+        });
     }
+
 
     private void initializeSpinners() {
         spinnerHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 9));
@@ -110,9 +124,21 @@ public class LessonFormController {
             new Alert(Alert.AlertType.ERROR, "Failed to load combo boxes!").show();
         }
     }
-
     private LessonDTO getLessonFromFields(StudentDTO student) {
+        // validate duration
+        int duration = 0;
+        try {
+            duration = Integer.parseInt(txtDuration.getText());
+            if (duration <= 0) {
+                throw new NumberFormatException("Duration must be positive");
+            }
+        } catch (NumberFormatException e) {
+            new Alert(Alert.AlertType.WARNING, "Please enter a valid duration!").show();
+            return null; // stop processing this student
+        }
+
         String lessonTime = String.format("%02d:%02d:00", spinnerHour.getValue(), spinnerMinute.getValue());
+
         return new LessonDTO(
                 txtLessonId.getText(),
                 student.getStudentId(),
@@ -120,9 +146,10 @@ public class LessonFormController {
                 cmbInstructor.getValue(),
                 dateLesson.getValue(),
                 lessonTime,
-                Integer.parseInt(txtDuration.getText())
+                duration
         );
     }
+
 
     @FXML
     void btnClearOnAction(ActionEvent event) {

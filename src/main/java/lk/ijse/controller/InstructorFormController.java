@@ -32,7 +32,6 @@ public class InstructorFormController {
     private String currentUserRole;
     private boolean roleSetBeforeInit = false;
 
-    /** Receive role from DashboardController */
     public void setUserRole(String role) {
         this.currentUserRole = role;
 
@@ -43,6 +42,7 @@ public class InstructorFormController {
             roleSetBeforeInit = true;
         }
     }
+
 
     @FXML
     public void initialize() {

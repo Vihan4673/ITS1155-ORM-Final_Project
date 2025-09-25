@@ -99,4 +99,21 @@ public class PaymentDAOImpl implements PaymentDAO {
             return "PAY001";
         }
     }
+    @Override
+    public Double getMonthlyIncome(int month, int year) {
+        try (Session session = FactoryConfiguration.getInstance().getSession()) {
+            String hql = "SELECT SUM(p.amount) FROM Payment p " +
+                    "WHERE MONTH(p.paymentDate) = :month AND YEAR(p.paymentDate) = :year";
+            Query<Double> query = session.createQuery(hql, Double.class);
+            query.setParameter("month", month);
+            query.setParameter("year", year);
+            Double result = query.uniqueResult();
+            return result != null ? result : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+
 }

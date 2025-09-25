@@ -57,24 +57,20 @@ public class LoginFormController {
 
     private void openMainForm(UserDTO user) {
         try {
-            String fxmlFile;
-
-            if ("Admin".equalsIgnoreCase(user.getRole())) {
-                fxmlFile = "/View/Dashboardpage.fxml";  // Admin dashboard
-            } else if ("Admissions Coordinator".equalsIgnoreCase(user.getRole()) ||
-                    "Receptionist".equalsIgnoreCase(user.getRole())) {
-                fxmlFile = "/View/Dashboardpage2.fxml"; // Receptionist / Coordinator dashboard
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Unknown role: " + user.getRole()).show();
-                return;
-            }
+            // Use the same dashboard for all roles
+            String fxmlFile = "/View/Dashboardpage.fxml";  // Single dashboard for everyone
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             AnchorPane root = loader.load();
 
             // Get the controller of the loaded dashboard
             DashboardController controller = loader.getController();
-            controller.setUserInfo(user.getName(), user.getRole()); // set name & role
+
+            // Set user info (name & role)
+            controller.setUserInfo(user.getName(), user.getRole());
+
+            // Optional: configure button access based on role inside the dashboard
+            controller.configureRoleAccess(user.getRole());
 
             Stage stage = (Stage) fullLoginForm.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -85,9 +81,11 @@ public class LoginFormController {
             stage.show();
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Cannot load dashboard!").show();
         }
     }
+
 
     @FXML
     void goToSignUpOnAction(ActionEvent event) {

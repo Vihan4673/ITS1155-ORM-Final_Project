@@ -84,12 +84,11 @@ public class CourseBOImpl implements CourseBO {
         return courseDAO.generateCourseId();
     }
 
-    // Converts user input to months for storage
     private int convertToMonths(int value, String unit) {
-        if (unit == null) return value; // default: months
+        if (unit == null) return value;
         switch (unit.toLowerCase()) {
             case "weeks":
-                return (int) Math.ceil(value / 4.0); // 4 weeks ≈ 1 month
+                return (int) Math.ceil(value / 4.0);
             case "months":
             default:
                 return value;

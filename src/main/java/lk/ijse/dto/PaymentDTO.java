@@ -18,4 +18,5 @@ public class PaymentDTO {
     private double totalFee;         // Total fee for selected courses
     private LocalDate paymentDate;   // Payment date (yyyy-MM-dd)
     private String status;           // PAID, PENDING, PARTIAL
+
 }

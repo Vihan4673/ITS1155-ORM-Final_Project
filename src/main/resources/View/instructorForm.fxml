@@ -26,7 +26,7 @@
             <children>
                 <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../asset/icon/online-learning.png"/>
+                        <Image url="@../Images/icon/online-learning.png"/>
                     </image>
                 </ImageView>
                 <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;"

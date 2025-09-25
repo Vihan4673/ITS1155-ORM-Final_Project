@@ -17,42 +17,35 @@ import java.util.Optional;
 
 public class SettingFormController {
 
-    @FXML private TableColumn<UserTm, String> colUserName;
-    @FXML private TableColumn<UserTm, String> colUserRole;
-    @FXML private TableColumn<UserTm, Button> colDelete;
-    @FXML private TableView<UserTm> tblUser;
+    @FXML
+    private TableColumn<UserTm, String> colUserName;
+    @FXML
+    private TableColumn<UserTm, String> colUserRole;
+    @FXML
+    private TableColumn<UserTm, Button> colDelete;
+    @FXML
+    private TableView<UserTm> tblUser;
 
-    @FXML private AnchorPane settingForm;
-    @FXML private TextField txtUserName;
-    @FXML private PasswordField txtPassword;
-    @FXML private PasswordField txtNewPassword;
-    @FXML private PasswordField txtConfirmPassword;
-
-    @FXML private AnchorPane visiblePane; // Admin-only pane
+    @FXML
+    private AnchorPane settingForm;
+    @FXML
+    private TextField txtUserName;
+    @FXML
+    private PasswordField txtNewPassword;
 
     private final SettingBO settingBO = (SettingBO) BOFactory.getBO(BOFactory.BOType.SETTING);
     private List<UserDTO> allUsers;
 
     public void initialize() {
-        // Hide new password fields initially
-        txtNewPassword.setVisible(false);
-        txtConfirmPassword.setVisible(false);
-        txtNewPassword.setDisable(true);
-        txtConfirmPassword.setDisable(true);
-
-        // Load current user's username
-        txtUserName.setText(LoginFormController.userDTO.getUserName());
-
-        // Show admin pane only for Admin
-        if (!"Admin".equalsIgnoreCase(LoginFormController.userDTO.getRole())) {
-            visiblePane.setVisible(false);
-        }
-
         setCellValueFactory();
         loadAllUsers();
 
-        // Press Enter on current password to enable new password fields
-        txtPassword.setOnAction(this::txtPasswordOnAction);
+        tblUser.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                txtUserName.setText(newSelection.getUserName());
+                txtNewPassword.clear();
+            }
+        });
     }
 
     private void setCellValueFactory() {
@@ -112,9 +105,7 @@ public class SettingFormController {
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
         String newUserName = txtUserName.getText().trim();
-        String currentPassword = txtPassword.getText().trim();
         String newPassword = txtNewPassword.getText().trim();
-        String confirmPassword = txtConfirmPassword.getText().trim();
 
         if (newUserName.isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "Username cannot be empty!").show();
@@ -123,23 +114,7 @@ public class SettingFormController {
 
         String hashedPassword = LoginFormController.userDTO.getPassword();
 
-        // Password change requested
-        if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
-            if (currentPassword.isEmpty()) {
-                new Alert(Alert.AlertType.WARNING, "Please enter current password first!").show();
-                return;
-            }
-
-            if (!PasswordStorage.checkPassword(currentPassword, hashedPassword)) {
-                new Alert(Alert.AlertType.ERROR, "Incorrect current password!").show();
-                return;
-            }
-
-            if (!newPassword.equals(confirmPassword)) {
-                new Alert(Alert.AlertType.ERROR, "New password and confirm password do not match!").show();
-                return;
-            }
-
+        if (!newPassword.isEmpty()) {
             hashedPassword = PasswordStorage.hashPassword(newPassword);
         }
 
@@ -152,39 +127,17 @@ public class SettingFormController {
             );
             settingBO.updateUser(userDTO);
 
-            // Update logged-in user
             LoginFormController.userDTO.setUserName(newUserName);
             LoginFormController.userDTO.setPassword(hashedPassword);
 
             loadAllUsers();
-
-            // Reset fields
-            txtPassword.clear();
             txtNewPassword.clear();
-            txtConfirmPassword.clear();
-            txtNewPassword.setVisible(false);
-            txtConfirmPassword.setVisible(false);
-            txtNewPassword.setDisable(true);
-            txtConfirmPassword.setDisable(true);
 
             new Alert(Alert.AlertType.INFORMATION, "Updated Successfully!").show();
 
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Update Failed!").show();
-        }
-    }
-
-    @FXML
-    void txtPasswordOnAction(ActionEvent event) {
-        if (PasswordStorage.checkPassword(txtPassword.getText().trim(), LoginFormController.userDTO.getPassword())) {
-            txtNewPassword.setVisible(true);
-            txtConfirmPassword.setVisible(true);
-            txtNewPassword.setDisable(false);
-            txtConfirmPassword.setDisable(false);
-            txtNewPassword.requestFocus();
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Incorrect Current Password!").show();
         }
     }
 }

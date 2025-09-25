@@ -27,7 +27,7 @@
             <children>
                 <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../asset/icon/dashboard.png" />
+                        <Image url="@../Images/icon/dashboard.png" />
                     </image>
                 </ImageView>
                 <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Dashboard" />

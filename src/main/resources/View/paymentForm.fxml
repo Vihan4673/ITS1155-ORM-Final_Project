@@ -35,7 +35,7 @@
             <children>
                 <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../asset/icon/credit-card.png"/>
+                        <Image url="@../Images/icon/credit-card.png"/>
                     </image>
                 </ImageView>
                 <Label style="-fx-font-family: 'Segoe UI', sans-serif; -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #34495e;"

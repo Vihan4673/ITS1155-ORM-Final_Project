@@ -14,4 +14,5 @@ public interface PaymentDAO extends SuperDAO {
     String generatePaymentId();
 
 
+    Double getMonthlyIncome(int month, int year);
 }

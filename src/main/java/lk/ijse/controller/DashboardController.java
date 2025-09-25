@@ -10,41 +10,24 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class DashboardController {
 
-    @FXML
-    private JFXButton btnDashboard;
+    @FXML private JFXButton btnDashboard;
+    @FXML private JFXButton btnProgram;
+    @FXML private JFXButton btnStudent;
+    @FXML private JFXButton btnInstructor;
+    @FXML private JFXButton btnPayment;
+    @FXML private JFXButton btnLessons;
 
-    @FXML
-    private JFXButton btnProgram;
+    @FXML private AnchorPane changeForm;
+    @FXML private AnchorPane dashboardFrom;
 
-    @FXML
-    private JFXButton btnStudent;
+    @FXML private Label lblUserName;
+    @FXML private Label lblUserRole;
 
-    @FXML
-    private JFXButton btnInstructor;
-
-    @FXML
-    private JFXButton btnPayment;
-
-    @FXML
-    private JFXButton btnLessons;
-
-    @FXML
-    private AnchorPane changeForm;
-
-    @FXML
-    private AnchorPane dashboardFrom;
-
-    @FXML
-    private Label lblUserName;
-
-    @FXML
-    private Label lblUserRole;
-
-    // Initialize method
     public void initialize() {
         try {
             // Load default dashboard
@@ -52,7 +35,7 @@ public class DashboardController {
             AnchorPane pane = loader.load();
             changeForm.getChildren().setAll(pane);
 
-            // Add hover effects ONLY to buttons that exist in FXML
+            // Add hover effects
             addHoverEffect(btnDashboard);
             addHoverEffect(btnProgram);
             addHoverEffect(btnStudent);
@@ -65,7 +48,6 @@ public class DashboardController {
         }
     }
 
-    // Hover effect helper
     private void addHoverEffect(JFXButton button) {
         DropShadow shadow = new DropShadow();
         shadow.setRadius(10);
@@ -83,40 +65,49 @@ public class DashboardController {
         });
     }
 
-    // Load forms
     @FXML
     void btnDashboardOnAction(ActionEvent event) {
-        loadForm("/View/Home.fxml", btnDashboard);
+        loadForm("/View/Home.fxml");
     }
 
     @FXML
     void btnProgramOnAction(ActionEvent event) {
-        loadForm("/View/CourseForm.fxml", btnProgram);
+        loadForm("/View/CourseForm.fxml");
     }
 
     @FXML
     void btnStudentOnAction(ActionEvent event) {
-        loadForm("/View/studentForm.fxml", btnStudent);
+        loadForm("/View/studentForm.fxml");
     }
 
     @FXML
     void btnInstructorOnAction(ActionEvent event) {
-        loadForm("/View/instructorForm.fxml", btnInstructor);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/instructorForm.fxml"));
+            AnchorPane pane = loader.load();
+
+            InstructorFormController controller = loader.getController();
+            controller.setUserRole(lblUserRole.getText());
+
+            changeForm.getChildren().setAll(pane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void btnPaymentOnAction(ActionEvent event) {
-        loadForm("/View/paymentTableForm.fxml", btnPayment);
+        loadForm("/View/paymentTableForm.fxml");
     }
 
     @FXML
     void btnLessonsOnAction(ActionEvent event) {
-        loadForm("/View/lessonForm.fxml", btnLessons);
+        loadForm("/View/lessonForm.fxml");
     }
 
     @FXML
-    void btSettingsOnAction(ActionEvent event)  {
-        loadForm("/View/settingForm.fxml", btnLessons);
+    void btSettingsOnAction(ActionEvent event) {
+        loadForm("/View/UserForm.fxml");
     }
 
     @FXML
@@ -128,12 +119,11 @@ public class DashboardController {
             stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-    // Utility method to load forms & highlight active button
-    private void loadForm(String fxmlPath, JFXButton activeButton) {
+    private void loadForm(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             AnchorPane pane = loader.load();
@@ -144,9 +134,35 @@ public class DashboardController {
         }
     }
 
-    // NEW: Method to set user info
+    // Set user info and apply role-based button access
     public void setUserInfo(String userName, String role) {
         lblUserName.setText(userName);
         lblUserRole.setText(role);
+        configureRoleAccess(role);
+    }
+
+    public void configureRoleAccess(String role) {
+        if ("Admin".equalsIgnoreCase(role)) {
+            btnDashboard.setDisable(false);
+            btnProgram.setDisable(false);
+            btnStudent.setDisable(false);
+            btnInstructor.setDisable(false);
+            btnPayment.setDisable(false);
+            btnLessons.setDisable(false);
+        } else if ("Receptionist".equalsIgnoreCase(role) || "Admissions Coordinator".equalsIgnoreCase(role)) {
+            btnDashboard.setDisable(false);
+            btnProgram.setDisable(true);      // Cannot manage courses
+            btnStudent.setDisable(false);     // Can manage students
+            btnInstructor.setDisable(true);   // Cannot manage instructors
+            btnPayment.setDisable(false);     // Can handle payments
+            btnLessons.setDisable(false);     // Can schedule lessons
+        } else {
+            btnDashboard.setDisable(true);
+            btnProgram.setDisable(true);
+            btnStudent.setDisable(true);
+            btnInstructor.setDisable(true);
+            btnPayment.setDisable(true);
+            btnLessons.setDisable(true);
+        }
     }
 }

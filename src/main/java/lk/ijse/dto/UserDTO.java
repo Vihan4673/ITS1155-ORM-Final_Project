@@ -13,14 +13,18 @@ public class UserDTO {
     private String password;
     private String role;
 
-    // Custom constructor for convenience (without userId)
+    /**
+     * Convenience constructor without userId (for creating new users before DB assignment)
+     */
     public UserDTO(String userName, String password, String role) {
         this.userName = userName;
         this.password = password;
         this.role = role;
     }
 
-    // Custom getter for name
+    /**
+     * Convenience getter for name
+     */
     public String getName() {
         return this.userName;
     }
