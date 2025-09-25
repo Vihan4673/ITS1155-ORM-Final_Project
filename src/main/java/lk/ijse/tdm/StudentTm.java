@@ -22,9 +22,9 @@ public class StudentTm {
     private long tel;
     private String email;
     private Date registrationDate;
-    private List<CourseDTO> courses = new ArrayList<>();  // Enrolled courses
+    private List<CourseDTO> courses = new ArrayList<>();
 
-    // Constructor without courses
+
     public StudentTm(String studentId, String name, String address, long tel, String email, Date registrationDate) {
         this.studentId = studentId;
         this.name = name;
@@ -35,7 +35,7 @@ public class StudentTm {
         this.courses = new ArrayList<>();
     }
 
-    // Returns course names as comma-separated string for TableView
+
     public String getCoursesString() {
         if (courses == null || courses.isEmpty()) return "";
         return courses.stream()
@@ -43,7 +43,7 @@ public class StudentTm {
                 .collect(Collectors.joining(", "));
     }
 
-    // Returns enrolled course IDs as an immutable list
+
     public List<String> getEnrolledCourseIds() {
         if (courses == null || courses.isEmpty()) return Collections.emptyList();
         return courses.stream()
@@ -51,7 +51,7 @@ public class StudentTm {
                 .collect(Collectors.toList());
     }
 
-    // Convenience methods
+
     public void addCourse(CourseDTO course) {
         if (course != null) {
             if (courses == null) courses = new ArrayList<>();

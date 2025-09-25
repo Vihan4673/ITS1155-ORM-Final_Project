@@ -26,7 +26,7 @@ public class LessonTm {
         this.duration = duration;
     }
 
-    // Getters and Setters
+
     public String getLessonId() {
         return lessonId;
     }

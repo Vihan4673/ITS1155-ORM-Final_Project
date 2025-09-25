@@ -11,7 +11,7 @@ public class Regex {
         NAME, ADDRESS, TEL, MONTH, PRICE, STUDENTID, PROGRAMID
     }
 
-    // Validation method
+
     public static boolean isTextFieldValid(lk.ijse.util.TextField fieldType, String text) {
         String regex = switch (fieldType) {
             case NAME -> "^[A-Za-z]+(?: [A-Za-z]+)*$";
@@ -33,7 +33,7 @@ public class Regex {
         return matcher.matches();
     }
 
-    // TextField ekata border color set karanna
+
     public static boolean setTextColor(lk.ijse.util.TextField fieldType, TextField textField) {
         if (isTextFieldValid(fieldType, textField.getText())) {
             textField.setStyle("-fx-border-color: transparent; -fx-focus-color: transparent;");

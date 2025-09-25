@@ -15,18 +15,18 @@ public class PaymentTM {
 
     private String paymentId;
     private String studentId;
-    private List<String> programIds;  // multiple programs
+    private List<String> programIds;
     private double amount;
-    private LocalDate date;           // Use LocalDate instead of String
+    private LocalDate date;
     private String status;
 
-    // Helper to display programs as comma-separated string
+
     public String getProgramIdsAsString() {
         if (programIds == null || programIds.isEmpty()) return "";
         return String.join(", ", programIds);
     }
 
-    // Helper to display date as string in table view
+
     public String getDateAsString() {
         if (date == null) return "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");

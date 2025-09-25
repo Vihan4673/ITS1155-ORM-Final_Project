@@ -34,19 +34,19 @@ public class Launcher extends Application {
             System.err.println("Failed to load loading screen!");
         }
 
-        // Task 1: Initialize Database/Hibernate
+
         Task<Void> initTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
                 FactoryConfiguration.getInstance();
-                Thread.sleep(1000); // optional: simulate loading delay
+                Thread.sleep(1000);
                 return null;
             }
         };
 
 
         initTask.setOnSucceeded(event -> {
-            // Task 2: Load Login Form
+
             Task<Parent> loginLoadTask = new Task<>() {
                 @Override
                 protected Parent call() throws Exception {
@@ -55,7 +55,7 @@ public class Launcher extends Application {
             };
 
             loginLoadTask.setOnSucceeded(e -> {
-                loadingStage.close(); // close loading screen
+                loadingStage.close();
                 Parent loginRoot = loginLoadTask.getValue();
                 Scene loginScene = new Scene(loginRoot);
 
