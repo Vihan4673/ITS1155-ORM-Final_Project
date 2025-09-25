@@ -14,7 +14,7 @@
 
 <AnchorPane fx:id="fullLoginForm" prefHeight="523.0" prefWidth="805.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.controller.LoginFormController">
 
-   <!-- Left Panel -->
+
    <AnchorPane prefHeight="500.0" prefWidth="400.0" style="-fx-background-color: #2c3e50;">
       <children>
          <ImageView fitHeight="539.0" fitWidth="400.0" layoutX="0.0" layoutY="0.0" opacity="0.02" preserveRatio="false" style="-fx-opacity: 0.7;">
@@ -34,18 +34,18 @@
       </children>
    </AnchorPane>
 
-   <!-- Right Panel - Login Form -->
+
    <AnchorPane fx:id="loginForm" layoutX="400.0" prefHeight="539.0" prefWidth="390.0" style="-fx-background-color: #ecf0f1; -fx-padding: 20;">
       <children>
 
-         <!-- LOGIN Label -->
+
          <Label alignment="CENTER" layoutX="150.0" layoutY="100.0" text="LOGIN" textFill="#2c3e50">
             <font>
                <Font name="System Bold" size="36.0" />
             </font>
          </Label>
 
-         <!-- Username -->
+
          <VBox layoutX="35.0" layoutY="160.0" prefWidth="330.0" spacing="5">
             <children>
                <Text fill="#34495e" text="User name">
@@ -61,7 +61,7 @@
             </children>
          </VBox>
 
-         <!-- Password -->
+
          <VBox layoutX="35.0" layoutY="240.0" prefWidth="330.0" spacing="5">
             <children>
                <Text fill="#34495e" text="Password">
@@ -77,21 +77,21 @@
             </children>
          </VBox>
 
-         <!-- Login Button -->
+
          <Button fx:id="btnLogin" layoutX="125.0" layoutY="320.0" mnemonicParsing="false" onAction="#loginOnAction" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #3498db; -fx-background-radius: 20; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);" text="LOGIN">
             <font>
                <Font name="System Bold" size="20.0" />
             </font>
          </Button>
 
-         <!-- Info Text -->
+
          <Text fill="#7f8c8d" layoutX="35.0" layoutY="385.0" text="Keep your login credentials confidential. Do not share your username or password with unauthorized individuals." textAlignment="CENTER" wrappingWidth="330.0">
             <font>
                <Font size="11.0" />
             </font>
          </Text>
 
-         <!-- SignUp Hyperlink -->
+
          <Hyperlink layoutX="210.0" layoutY="437.0" onAction="#goToSignUpOnAction" prefHeight="26.0" prefWidth="101.0" text=" Register here." textFill="#3498db" underline="true">
             <font>
                <Font size="14.0" />
