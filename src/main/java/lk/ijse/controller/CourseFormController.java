@@ -60,7 +60,6 @@ public class CourseFormController {
         tblProgram.setItems(tmList);
     }
 
-    // Converts months to human-readable string
     private String convertDurationToString(int duration) {
         if(duration >= 12){
             int years = duration / 12;
@@ -70,7 +69,6 @@ public class CourseFormController {
         return duration + " months";
     }
 
-    // Converts duration string back to months
     private int convertDurationToInt(String duration) {
         int years = 0, months = 0;
         String[] parts = duration.split(" ");
@@ -81,12 +79,11 @@ public class CourseFormController {
         return years * 12 + months;
     }
 
-    // Converts TextField + ComboBox input to months for storage
     private int getDurationInMonths() {
         int value = Integer.parseInt(txtDuration.getText());
         String unit = cmbDurationUnit.getValue();
         if(unit.equalsIgnoreCase("Weeks")) {
-            return (int) Math.ceil(value / 4.0); // approximate 4 weeks = 1 month
+            return (int) Math.ceil(value / 4.0);
         }
         return value;
     }
@@ -97,7 +94,7 @@ public class CourseFormController {
                 txtName.getText(),
                 getDurationInMonths(),
                 Double.parseDouble(txtFee.getText()),
-                cmbDurationUnit.getValue() // add durationUnit
+                cmbDurationUnit.getValue()
         );
     }
 

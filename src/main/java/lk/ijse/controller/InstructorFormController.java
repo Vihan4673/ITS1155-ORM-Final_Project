@@ -35,7 +35,7 @@ public class InstructorFormController {
     public void setUserRole(String role) {
         this.currentUserRole = role;
 
-        // If buttons initialized, apply restrictions immediately
+
         if (btnSave != null) {
             applyRoleRestrictions();
         } else {
@@ -46,23 +46,23 @@ public class InstructorFormController {
 
     @FXML
     public void initialize() {
-        // Table binding
+
         colId.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getInstructorId()));
         colName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getName()));
         colSpecialization.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getSpecialization()));
 
-        // Load data & set ID
+
         loadAllInstructors();
         txtInstructorId.setText(instructorBO.generateNewId());
         txtInstructorId.setEditable(false);
 
-        // Apply role restrictions if role was set before initialize
+
         if (roleSetBeforeInit && currentUserRole != null) {
             applyRoleRestrictions();
         }
     }
 
-    /** Apply role-based restrictions */
+
     private void applyRoleRestrictions() {
         if ("RECEPTIONIST".equalsIgnoreCase(currentUserRole)) {
             btnSave.setDisable(true);
@@ -73,18 +73,17 @@ public class InstructorFormController {
             txtName.setEditable(false);
             txtSpecialization.setEditable(false);
 
-            // Table view read-only
             tblInstructor.setOnMouseClicked(event -> event.consume());
         }
     }
 
-    /** Load all instructors */
+
     private void loadAllInstructors() {
         ObservableList<InstructorDTO> list = FXCollections.observableArrayList(instructorBO.getAllInstructors());
         tblInstructor.setItems(list);
     }
 
-    /** Save new instructor */
+
     @FXML
     private void btnSaveOnAction() {
         if (txtName.getText().isEmpty() || txtSpecialization.getText().isEmpty()) {
@@ -98,7 +97,7 @@ public class InstructorFormController {
         }
     }
 
-    /** Update selected instructor */
+
     @FXML
     private void btnUpdateOnAction() {
         if (txtInstructorId.getText().isEmpty()) {
@@ -112,7 +111,7 @@ public class InstructorFormController {
         }
     }
 
-    /** Delete selected instructor */
+
     @FXML
     private void btnDeleteOnAction() {
         if (txtInstructorId.getText().isEmpty()) {
@@ -125,7 +124,7 @@ public class InstructorFormController {
         }
     }
 
-    /** Clear input fields */
+
     @FXML
     private void btnClearOnAction() {
         clearFields();
@@ -137,7 +136,7 @@ public class InstructorFormController {
         txtInstructorId.setText(instructorBO.generateNewId());
     }
 
-    /** Populate fields when row clicked */
+
     @FXML
     private void tblInstructorOnClickAction() {
         InstructorDTO dto = tblInstructor.getSelectionModel().getSelectedItem();
@@ -148,7 +147,7 @@ public class InstructorFormController {
         }
     }
 
-    /** Filter instructors while typing */
+
     @FXML
     public void txtSearchKeyReleased(KeyEvent keyEvent) {
         String searchText = txtSearch.getText().toLowerCase();
@@ -164,7 +163,7 @@ public class InstructorFormController {
         tblInstructor.setItems(filteredList);
     }
 
-    /** Helper methods */
+
     private void reloadAndClear() {
         loadAllInstructors();
         clearFields();

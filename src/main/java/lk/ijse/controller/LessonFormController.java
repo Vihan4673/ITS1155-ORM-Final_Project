@@ -55,7 +55,7 @@ public class LessonFormController {
         initializeSpinners();
         listStudents.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        // Display only ID + Name in ListView
+
         listStudents.setCellFactory(param -> new ListCell<StudentDTO>() {
             @Override
             protected void updateItem(StudentDTO student, boolean empty) {
@@ -125,7 +125,7 @@ public class LessonFormController {
         }
     }
     private LessonDTO getLessonFromFields(StudentDTO student) {
-        // validate duration
+
         int duration = 0;
         try {
             duration = Integer.parseInt(txtDuration.getText());
@@ -134,7 +134,7 @@ public class LessonFormController {
             }
         } catch (NumberFormatException e) {
             new Alert(Alert.AlertType.WARNING, "Please enter a valid duration!").show();
-            return null; // stop processing this student
+            return null;
         }
 
         String lessonTime = String.format("%02d:%02d:00", spinnerHour.getValue(), spinnerMinute.getValue());
@@ -241,7 +241,7 @@ public class LessonFormController {
 
             txtDuration.setText(String.valueOf(selected.getDuration()));
 
-            // select the student in ListView
+
             listStudents.getItems().stream()
                     .filter(s -> s.getStudentId().equals(selected.getStudentId()))
                     .findFirst()

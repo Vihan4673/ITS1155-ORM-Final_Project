@@ -30,12 +30,10 @@ public class DashboardController {
 
     public void initialize() {
         try {
-            // Load default dashboard
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Home.fxml"));
             AnchorPane pane = loader.load();
             changeForm.getChildren().setAll(pane);
 
-            // Add hover effects
             addHoverEffect(btnDashboard);
             addHoverEffect(btnProgram);
             addHoverEffect(btnStudent);
@@ -134,7 +132,6 @@ public class DashboardController {
         }
     }
 
-    // Set user info and apply role-based button access
     public void setUserInfo(String userName, String role) {
         lblUserName.setText(userName);
         lblUserRole.setText(role);
@@ -151,11 +148,11 @@ public class DashboardController {
             btnLessons.setDisable(false);
         } else if ("Receptionist".equalsIgnoreCase(role) || "Admissions Coordinator".equalsIgnoreCase(role)) {
             btnDashboard.setDisable(false);
-            btnProgram.setDisable(true);      // Cannot manage courses
-            btnStudent.setDisable(false);     // Can manage students
-            btnInstructor.setDisable(true);   // Cannot manage instructors
-            btnPayment.setDisable(false);     // Can handle payments
-            btnLessons.setDisable(false);     // Can schedule lessons
+            btnProgram.setDisable(true);
+            btnStudent.setDisable(false);
+            btnInstructor.setDisable(true);
+            btnPayment.setDisable(false);
+            btnLessons.setDisable(false);
         } else {
             btnDashboard.setDisable(true);
             btnProgram.setDisable(true);

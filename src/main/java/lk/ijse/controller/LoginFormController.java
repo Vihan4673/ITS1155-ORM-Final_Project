@@ -43,7 +43,7 @@ public class LoginFormController {
 
                 if (PasswordStorage.checkPassword(inputPassword.getText().trim(), loginUser.getPassword())) {
                     userDTO = loginUser;
-                    openMainForm(loginUser);  // pass the whole userDTO
+                    openMainForm(loginUser);
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Invalid User Password !!").show();
                 }
@@ -57,19 +57,15 @@ public class LoginFormController {
 
     private void openMainForm(UserDTO user) {
         try {
-            // Use the same dashboard for all roles
-            String fxmlFile = "/View/Dashboardpage.fxml";  // Single dashboard for everyone
+
+            String fxmlFile = "/View/Dashboardpage.fxml";
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             AnchorPane root = loader.load();
 
-            // Get the controller of the loaded dashboard
+
             DashboardController controller = loader.getController();
-
-            // Set user info (name & role)
             controller.setUserInfo(user.getName(), user.getRole());
-
-            // Optional: configure button access based on role inside the dashboard
             controller.configureRoleAccess(user.getRole());
 
             Stage stage = (Stage) fullLoginForm.getScene().getWindow();

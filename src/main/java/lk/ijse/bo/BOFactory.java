@@ -16,7 +16,7 @@ public class BOFactory {
             case STUDENT -> new StudentBOImpl();
             case DASHBOARD -> new DashboardBOImpl();
             case INSTRUCTOR -> new InstructorBOImpl();
-            case VIEWALL -> new ViewAllBOImpl();
+
             case LESSON -> new LessonBOImpl();
             case SIGNUP -> new SignUpBOImpl();
             case LOGIN -> new LoginBOImpl();

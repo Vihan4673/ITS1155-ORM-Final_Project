@@ -42,7 +42,7 @@ public class HomeController {
     @FXML
     private Label lblTotalStudent;
 
-    // ❌ Not used in FXML - removed lblStudentCount
+
     @FXML
     private TableView<StudyAllStudentTm> tblStudyAll;
 
@@ -116,7 +116,7 @@ public class HomeController {
             session = FactoryConfiguration.getInstance().getSession();
             transaction = session.beginTransaction();
 
-            // JPQL query to count students per month
+
             List<Object[]> results = session.createQuery(
                             "SELECT FUNCTION('MONTH', s.registrationDate), COUNT(s) " +
                                     "FROM Student s " +
@@ -160,7 +160,6 @@ public class HomeController {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentYear = LocalDate.now().getYear();
 
-            // DB column name = payment_date
             Double totalIncome = ((Number) session.createNativeQuery(
                             "SELECT SUM(amount) FROM payments " +
                                     "WHERE MONTH(payment_date) = :month AND YEAR(payment_date) = :year")

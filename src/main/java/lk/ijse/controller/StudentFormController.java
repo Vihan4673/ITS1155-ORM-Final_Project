@@ -163,11 +163,9 @@ public class StudentFormController {
 
             new Alert(Alert.AlertType.INFORMATION, "Student Saved Successfully!").show();
 
-            // Clear & reload table
             clearData();
             loadAllStudent();
 
-            // ⚡ Open Payment Form
             openPaymentForm(dto);
 
         } catch (Exception e) {

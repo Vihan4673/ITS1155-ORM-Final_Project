@@ -20,13 +20,11 @@ public class PayController {
     private PaymentTM selectedPayment;
     private final PaymentBO paymentBO = (PaymentBO) BOFactory.getBO(BOFactory.BOType.PAYMENT);
 
-    /** Initialize controller with selected payment */
     public void setPayment(PaymentTM payment) {
         this.selectedPayment = payment;
         loadPaymentDetails();
     }
 
-    /** Load payment details into the form */
     private void loadPaymentDetails() {
         if (selectedPayment != null) {
             cmbPaymentId.getItems().clear();
@@ -39,7 +37,6 @@ public class PayController {
         }
     }
 
-    /** Pay button clicked */
     @FXML
     private void btnPayOnAction() {
         try {
@@ -79,13 +76,12 @@ public class PayController {
     }
 
 
-    /** Clear button clicked */
+
     @FXML
     private void btnClearOnAction() {
         txtAmount.clear();
     }
 
-    /** Close the form */
     private void closeForm() {
         Stage stage = (Stage) txtAmount.getScene().getWindow();
         stage.close();

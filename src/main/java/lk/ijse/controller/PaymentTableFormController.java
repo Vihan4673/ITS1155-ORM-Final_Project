@@ -63,7 +63,7 @@ public class PaymentTableFormController {
         ));
         colStatus.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus()));
 
-        // Editable status
+
         colStatus.setCellFactory(TextFieldTableCell.forTableColumn());
         colStatus.setOnEditCommit(event -> {
             PaymentTM payment = event.getRowValue();
@@ -76,7 +76,7 @@ public class PaymentTableFormController {
             }
         });
 
-        // Action column: Pay button
+
         colAction.setCellValueFactory(cell -> {
             Button payBtn = new Button("Pay");
             payBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
@@ -89,7 +89,7 @@ public class PaymentTableFormController {
 
         loadPayments();
 
-        // Search listeners (null-safe)
+
         if (txtStuID != null) txtStuID.textProperty().addListener((obs, oldText, newText) -> searchPayments());
         if (txCouID != null) txCouID.textProperty().addListener((obs, oldText, newText) -> searchPayments());
     }
@@ -146,10 +146,10 @@ public class PaymentTableFormController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/pay.fxml"));
             Parent root = loader.load();
 
-            // Correct controller type
+
             PayController controller = loader.getController();
 
-            // Prepare data to set
+
             controller.setPayment(payment);
 
             Stage stage = new Stage();
@@ -157,7 +157,6 @@ public class PaymentTableFormController {
             stage.setTitle("Make Payment");
             stage.show();
 
-            // Refresh table after Pay form is closed
             stage.setOnHidden(e -> loadPayments());
 
         } catch (Exception e) {
@@ -167,6 +166,6 @@ public class PaymentTableFormController {
     }
 
     public void txtSearchKeyReleased(KeyEvent keyEvent) {
-        // Not needed since we use listeners
+
     }
 }
