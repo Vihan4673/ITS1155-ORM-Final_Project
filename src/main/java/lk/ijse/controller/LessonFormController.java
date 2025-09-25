@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import lk.ijse.bo.BOFactory;
 import lk.ijse.bo.custom.CourseBO;
 import lk.ijse.bo.custom.InstructorBO;
@@ -20,6 +19,7 @@ import lk.ijse.tdm.LessonTm;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LessonFormController {
 
@@ -55,7 +55,6 @@ public class LessonFormController {
         initializeSpinners();
         listStudents.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-
         listStudents.setCellFactory(param -> new ListCell<StudentDTO>() {
             @Override
             protected void updateItem(StudentDTO student, boolean empty) {
@@ -69,7 +68,6 @@ public class LessonFormController {
         });
     }
 
-
     private void initializeSpinners() {
         spinnerHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 9));
         spinnerHour.setEditable(true);
@@ -77,9 +75,12 @@ public class LessonFormController {
         spinnerMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         spinnerMinute.setEditable(true);
     }
+
     private void setCellValueFactory() {
         colLessonId.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getLessonId()));
-        colStudent.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getStudentId()));
+        colStudent.setCellValueFactory(cell -> new ReadOnlyStringWrapper(
+                String.join(", ", cell.getValue().getStudentIds())
+        ));
         colCourse.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getCourseId()));
         colInstructor.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getInstructorId()));
         colDate.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getLessonDate()));
@@ -87,14 +88,14 @@ public class LessonFormController {
         colDuration.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDuration()));
     }
 
-
     private void loadAllLessons() {
         List<LessonDTO> allLessons = lessonBO.getAllLesson();
         ObservableList<LessonTm> lessonTms = FXCollections.observableArrayList();
+
         for (LessonDTO dto : allLessons) {
             lessonTms.add(new LessonTm(
                     dto.getLessonId(),
-                    dto.getStudentId(),
+                    List.of(dto.getStudentId()),
                     dto.getCourseId(),
                     dto.getInstructorId(),
                     dto.getLessonDate(),
@@ -102,6 +103,7 @@ public class LessonFormController {
                     dto.getDuration()
             ));
         }
+
         tblLesson.setItems(lessonTms);
     }
 
@@ -124,14 +126,12 @@ public class LessonFormController {
             new Alert(Alert.AlertType.ERROR, "Failed to load combo boxes!").show();
         }
     }
-    private LessonDTO getLessonFromFields(StudentDTO student) {
 
+    private LessonDTO getLessonFromFields(StudentDTO student) {
         int duration = 0;
         try {
             duration = Integer.parseInt(txtDuration.getText());
-            if (duration <= 0) {
-                throw new NumberFormatException("Duration must be positive");
-            }
+            if (duration <= 0) throw new NumberFormatException("Duration must be positive");
         } catch (NumberFormatException e) {
             new Alert(Alert.AlertType.WARNING, "Please enter a valid duration!").show();
             return null;
@@ -149,7 +149,6 @@ public class LessonFormController {
                 duration
         );
     }
-
 
     @FXML
     void btnClearOnAction(ActionEvent event) {
@@ -192,8 +191,11 @@ public class LessonFormController {
 
         try {
             for (StudentDTO student : selectedStudents) {
+                txtLessonId.setText(lessonBO.generateNextLessonId());
                 LessonDTO dto = getLessonFromFields(student);
-                lessonBO.saveLesson(dto);
+                if (dto != null) {
+                    lessonBO.saveLesson(dto);
+                } else return;
             }
             new Alert(Alert.AlertType.INFORMATION, "Lesson(s) saved successfully!").show();
             clearData();
@@ -241,11 +243,11 @@ public class LessonFormController {
 
             txtDuration.setText(String.valueOf(selected.getDuration()));
 
-
-            listStudents.getItems().stream()
-                    .filter(s -> s.getStudentId().equals(selected.getStudentId()))
-                    .findFirst()
-                    .ifPresent(s -> listStudents.getSelectionModel().select(s));
+            listStudents.getItems().forEach(student -> {
+                if (selected.getStudentIds().contains(student.getStudentId())) {
+                    listStudents.getSelectionModel().select(student);
+                }
+            });
         }
     }
 
@@ -263,7 +265,7 @@ public class LessonFormController {
 
                 filteredList.add(new LessonTm(
                         dto.getLessonId(),
-                        dto.getStudentId(),
+                        List.of(dto.getStudentId()),
                         dto.getCourseId(),
                         dto.getInstructorId(),
                         dto.getLessonDate(),

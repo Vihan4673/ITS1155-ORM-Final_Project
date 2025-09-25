@@ -11,4 +11,6 @@ public class InstructorDTO {
     private String instructorId;
     private String name;
     private String specialization;
+    private String email;
+    private String phone;
 }

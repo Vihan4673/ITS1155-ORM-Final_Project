@@ -11,16 +11,30 @@ import java.util.List;
 
 public class InstructorBOImpl implements InstructorBO {
 
-    InstructorDAO instructorDAO = (InstructorDAO) DAOFactory.getDAO(DAOFactory.DAOType.INSTRUCTOR);
+    private final InstructorDAO instructorDAO = (InstructorDAO) DAOFactory.getDAO(DAOFactory.DAOType.INSTRUCTOR);
 
     @Override
     public boolean saveInstructor(InstructorDTO dto) {
-        return instructorDAO.save(new Instructor(dto.getInstructorId(), dto.getName(), dto.getSpecialization(), null, null));
+        Instructor instructor = new Instructor(
+                dto.getInstructorId(),
+                dto.getName(),
+                dto.getSpecialization(),
+                dto.getEmail(),
+                dto.getPhone()
+        );
+        return instructorDAO.save(instructor);
     }
 
     @Override
     public boolean updateInstructor(InstructorDTO dto) {
-        return instructorDAO.update(new Instructor(dto.getInstructorId(), dto.getName(), dto.getSpecialization(), null, null));
+        Instructor instructor = new Instructor(
+                dto.getInstructorId(),
+                dto.getName(),
+                dto.getSpecialization(),
+                dto.getEmail(),
+                dto.getPhone()
+        );
+        return instructorDAO.update(instructor);
     }
 
     @Override
@@ -31,7 +45,15 @@ public class InstructorBOImpl implements InstructorBO {
     @Override
     public InstructorDTO searchInstructor(String id) {
         Instructor i = instructorDAO.search(id);
-        if (i != null) return new InstructorDTO(i.getInstructorId(), i.getName(), i.getSpecialization());
+        if (i != null) {
+            return new InstructorDTO(
+                    i.getInstructorId(),
+                    i.getName(),
+                    i.getSpecialization(),
+                    i.getEmail(),
+                    i.getPhone()
+            );
+        }
         return null;
     }
 
@@ -39,7 +61,15 @@ public class InstructorBOImpl implements InstructorBO {
     public List<InstructorDTO> getAllInstructors() {
         List<Instructor> list = instructorDAO.getAll();
         List<InstructorDTO> dtoList = new ArrayList<>();
-        for (Instructor i : list) dtoList.add(new InstructorDTO(i.getInstructorId(), i.getName(), i.getSpecialization()));
+        for (Instructor i : list) {
+            dtoList.add(new InstructorDTO(
+                    i.getInstructorId(),
+                    i.getName(),
+                    i.getSpecialization(),
+                    i.getEmail(),
+                    i.getPhone()
+            ));
+        }
         return dtoList;
     }
 

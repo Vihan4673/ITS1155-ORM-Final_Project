@@ -21,10 +21,16 @@ public class Instructor {
     @Column(nullable = false)
     private String specialization;
 
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
 
 
@@ -32,7 +38,20 @@ public class Instructor {
         this.instructorId = instructorId;
         this.name = "";
         this.specialization = "";
+        this.email = "";
+        this.phone = "";
+        this.courses = new ArrayList<>();
+        this.lessons = new ArrayList<>();
+    }
+
+    public Instructor(String instructorId, String name, String specialization, String email, String phone) {
+        this.instructorId = instructorId;
+        this.name = name;
+        this.specialization = specialization;
+        this.email = email;
+        this.phone = phone;
         this.courses = new ArrayList<>();
         this.lessons = new ArrayList<>();
     }
 }
+

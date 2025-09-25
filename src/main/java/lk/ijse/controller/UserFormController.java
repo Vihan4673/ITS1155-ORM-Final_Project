@@ -15,7 +15,7 @@ import lk.ijse.util.PasswordStorage;
 import java.util.List;
 import java.util.Optional;
 
-public class SettingFormController {
+public class UserFormController {
 
     @FXML
     private TableColumn<UserTm, String> colUserName;
@@ -47,12 +47,24 @@ public class SettingFormController {
             }
         });
     }
+    public void setUserRole(String role) {
+
+        if ("Receptionist".equalsIgnoreCase(role)) {
+            txtUserName.setStyle("-fx-background-color: #ffcccc;");
+            txtNewPassword.setStyle("-fx-background-color: #ffcccc;");
+            tblUser.setStyle("-fx-opacity: 0.5;");
+        } else if ("Admin".equalsIgnoreCase(role)) {
+            txtUserName.setStyle("");
+            txtNewPassword.setStyle("");
+            tblUser.setStyle("");
+        }
+    }
 
     private void setCellValueFactory() {
         colUserName.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("userName"));
         colUserRole.setCellValueFactory(param -> {
             String role = param.getValue().getRole();
-            if ("AdmissionCoordinator".equalsIgnoreCase(role)) {
+            if ("Receptionist".equalsIgnoreCase(role)) {
                 role = "Receptionist";
             }
             return new javafx.beans.property.SimpleStringProperty(role);

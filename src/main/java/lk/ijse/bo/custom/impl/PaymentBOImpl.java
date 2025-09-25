@@ -27,6 +27,7 @@ public class PaymentBOImpl implements PaymentBO {
             Student student = new Student();
             student.setStudentId(dto.getStudentId());
 
+            // Courses list
             List<Course> courses = dto.getProgramIds().stream()
                     .map(id -> {
                         Course c = new Course();
@@ -37,7 +38,7 @@ public class PaymentBOImpl implements PaymentBO {
             Payment payment = Payment.builder()
                     .paymentId(dto.getPaymentId())
                     .student(student)
-                    .programs(courses)
+                    .programs(courses)  // must be non-null
                     .amount(dto.getAdvanceAmount())
                     .totalFee(dto.getTotalFee())
                     .paymentDate(dto.getPaymentDate())
@@ -126,7 +127,7 @@ public class PaymentBOImpl implements PaymentBO {
 
     // DTO -> Entity
     private Payment toEntity(PaymentDTO dto) {
-        Student student = new Student(dto.getStudentId());
+        Student student = new Student(dto.getStudentId()); // ID-only constructor
         List<Course> programs = dto.getProgramIds() != null
                 ? dto.getProgramIds().stream().map(Course::new).collect(Collectors.toList())
                 : List.of();
@@ -137,12 +138,13 @@ public class PaymentBOImpl implements PaymentBO {
         payment.setPrograms(programs);
         payment.setAmount(dto.getAdvanceAmount());
         payment.setTotalFee(dto.getTotalFee());
-        payment.setPaymentDate(dto.getPaymentDate());
+        payment.setPaymentDate(dto.getPaymentDate()); // LocalDate
         payment.setStatus(dto.getStatus());
 
         return payment;
     }
 
+    // Entity -> DTO
     private PaymentDTO toDTO(Payment entity) {
         List<String> programIds = entity.getPrograms() != null
                 ? entity.getPrograms().stream().map(Course::getProgramId).collect(Collectors.toList())

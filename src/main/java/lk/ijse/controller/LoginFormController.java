@@ -70,7 +70,7 @@ public class LoginFormController {
 
             Stage stage = (Stage) fullLoginForm.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Wimal Villa - Dashboard");
+            stage.setTitle("Elite Driving School");
             stage.setResizable(true);
             stage.setMaximized(true);
             stage.centerOnScreen();

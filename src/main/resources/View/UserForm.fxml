@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="settingForm" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f9;"
             xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="lk.ijse.controller.SettingFormController">
+            fx:controller="lk.ijse.controller.UserFormController">
 
    <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0"
          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

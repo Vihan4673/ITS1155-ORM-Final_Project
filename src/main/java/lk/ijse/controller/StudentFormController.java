@@ -118,12 +118,12 @@ public class StudentFormController {
     private StudentDTO getObject() {
         if (!validateInput()) return null;
 
-        // ⚡ ensure studentId is set
+
         String studentId = txtId.getText();
         if (studentId == null || studentId.isEmpty()) {
             try {
-                studentId = studentBO.generateNewId(); // generate new ID
-                txtId.setText(studentId); // update UI
+                studentId = studentBO.generateNewId();
+                txtId.setText(studentId);
             } catch (Exception e) {
                 e.printStackTrace();
                 new Alert(Alert.AlertType.ERROR, "Failed to generate Student ID!").show();
@@ -158,13 +158,15 @@ public class StudentFormController {
         if (dto == null) return;
 
         try {
-            // ⚡ Save student
+
             studentBO.saveStudent(dto);
 
             new Alert(Alert.AlertType.INFORMATION, "Student Saved Successfully!").show();
 
+
             clearData();
             loadAllStudent();
+
 
             openPaymentForm(dto);
 

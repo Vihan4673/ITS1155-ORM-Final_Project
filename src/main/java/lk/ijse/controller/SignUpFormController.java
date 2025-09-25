@@ -48,7 +48,7 @@ public class SignUpFormController {
             if (adminCheckBox.isSelected()) {
                 userDTO.setRole("Admin");
             } else {
-                userDTO.setRole("Admissions Coordinator");
+                userDTO.setRole("Receptionist");
             }
 
             try {

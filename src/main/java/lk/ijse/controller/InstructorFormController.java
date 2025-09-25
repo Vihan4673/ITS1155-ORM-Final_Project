@@ -19,12 +19,18 @@ public class InstructorFormController {
     @FXML private TextField txtInstructorId;
     @FXML private TextField txtName;
     @FXML private TextField txtSpecialization;
+    @FXML
+    private TextField txtEmail;
+
+    @FXML
+    private TextField txtPhone;
 
     @FXML private TableView<InstructorDTO> tblInstructor;
     @FXML private TableColumn<InstructorDTO, String> colId;
     @FXML private TableColumn<InstructorDTO, String> colName;
     @FXML private TableColumn<InstructorDTO, String> colSpecialization;
-
+    @FXML private TableColumn<InstructorDTO, String> colEmail;
+    @FXML private TableColumn<InstructorDTO, String> colPhone;
     @FXML private JFXButton btnSave, btnUpdate, btnDelete, btnClear;
 
     private final InstructorBO instructorBO = (InstructorBO) BOFactory.getBO(BOFactory.BOType.INSTRUCTOR);
@@ -50,6 +56,8 @@ public class InstructorFormController {
         colId.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getInstructorId()));
         colName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getName()));
         colSpecialization.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getSpecialization()));
+        colEmail.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getEmail()));
+        colPhone.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getPhone()));
 
 
         loadAllInstructors();
@@ -83,14 +91,22 @@ public class InstructorFormController {
         tblInstructor.setItems(list);
     }
 
-
     @FXML
     private void btnSaveOnAction() {
-        if (txtName.getText().isEmpty() || txtSpecialization.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Name and Specialization cannot be empty!");
+        if (txtName.getText().isEmpty() || txtSpecialization.getText().isEmpty() ||
+                txtEmail.getText().isEmpty() || txtPhone.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "All fields must be filled!");
             return;
         }
-        InstructorDTO dto = new InstructorDTO(txtInstructorId.getText(), txtName.getText(), txtSpecialization.getText());
+
+        InstructorDTO dto = new InstructorDTO(
+                txtInstructorId.getText(),
+                txtName.getText(),
+                txtSpecialization.getText(),
+                txtEmail.getText(),
+                txtPhone.getText()
+        );
+
         if (instructorBO.saveInstructor(dto)) {
             showAlert(Alert.AlertType.INFORMATION, "Success", "Instructor saved successfully!");
             reloadAndClear();
@@ -104,12 +120,21 @@ public class InstructorFormController {
             showAlert(Alert.AlertType.WARNING, "Selection Error", "Please select an Instructor to update!");
             return;
         }
-        InstructorDTO dto = new InstructorDTO(txtInstructorId.getText(), txtName.getText(), txtSpecialization.getText());
+
+        InstructorDTO dto = new InstructorDTO(
+                txtInstructorId.getText(),
+                txtName.getText(),
+                txtSpecialization.getText(),
+                txtEmail.getText(),
+                txtPhone.getText()
+        );
+
         if (instructorBO.updateInstructor(dto)) {
             showAlert(Alert.AlertType.INFORMATION, "Success", "Instructor updated successfully!");
             reloadAndClear();
         }
     }
+
 
 
     @FXML
@@ -133,6 +158,8 @@ public class InstructorFormController {
     private void clearFields() {
         txtName.clear();
         txtSpecialization.clear();
+        txtEmail.clear();
+        txtPhone.clear();
         txtInstructorId.setText(instructorBO.generateNewId());
     }
 
@@ -144,9 +171,10 @@ public class InstructorFormController {
             txtInstructorId.setText(dto.getInstructorId());
             txtName.setText(dto.getName());
             txtSpecialization.setText(dto.getSpecialization());
+            txtEmail.setText(dto.getEmail());
+            txtPhone.setText(dto.getPhone());
         }
     }
-
 
     @FXML
     public void txtSearchKeyReleased(KeyEvent keyEvent) {
@@ -162,7 +190,6 @@ public class InstructorFormController {
         }
         tblInstructor.setItems(filteredList);
     }
-
 
     private void reloadAndClear() {
         loadAllInstructors();

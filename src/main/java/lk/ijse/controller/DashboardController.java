@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
@@ -105,8 +106,24 @@ public class DashboardController {
 
     @FXML
     void btSettingsOnAction(ActionEvent event) {
-        loadForm("/View/UserForm.fxml");
+        if (!"Admin".equalsIgnoreCase(lblUserRole.getText())) {
+            new Alert(Alert.AlertType.WARNING, "Access Denied! Only Admin can manage users.").show();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/UserForm.fxml"));
+            AnchorPane pane = loader.load();
+
+            UserFormController controller = loader.getController();
+            controller.setUserRole(lblUserRole.getText());
+
+            changeForm.getChildren().setAll(pane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @FXML
     void logOutAction(ActionEvent event) {

@@ -1,11 +1,12 @@
 package lk.ijse.tdm;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class LessonTm {
 
     private String lessonId;
-    private String studentId;
+    private List<String> studentIds;
     private String courseId;
     private String instructorId;
     private LocalDate lessonDate;
@@ -15,17 +16,16 @@ public class LessonTm {
     public LessonTm() {
     }
 
-    public LessonTm(String lessonId, String studentId, String courseId, String instructorId,
+    public LessonTm(String lessonId, List<String> studentIds, String courseId, String instructorId,
                     LocalDate lessonDate, String lessonTime, int duration) {
         this.lessonId = lessonId;
-        this.studentId = studentId;
+        this.studentIds = studentIds;
         this.courseId = courseId;
         this.instructorId = instructorId;
         this.lessonDate = lessonDate;
         this.lessonTime = lessonTime;
         this.duration = duration;
     }
-
 
     public String getLessonId() {
         return lessonId;
@@ -35,12 +35,12 @@ public class LessonTm {
         this.lessonId = lessonId;
     }
 
-    public String getStudentId() {
-        return studentId;
+    public List<String> getStudentIds() {
+        return studentIds;
     }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
+    public void setStudentIds(List<String> studentIds) {
+        this.studentIds = studentIds;
     }
 
     public String getCourseId() {
